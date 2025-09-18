@@ -45,7 +45,7 @@ class AuthenticateService:
             hashed = bcrypt.hashpw(user_dto.password.encode('utf-8'), bcrypt.gensalt())
 
             user = AppUser(email=user_dto.email, password=hashed.decode('utf-8'), name=user_dto.name,
-                           document=user_dto.document, client_id=user_dto.client_id)
+                           document=user_dto.document, id_client=user_dto.id_client)
 
             user = self.user_repo.create(user, conn)
 

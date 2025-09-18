@@ -10,21 +10,21 @@ service = CompanyService()
 @company_controller.route("", methods=["GET"])
 @validate()
 def get_all():
-    client_id = request.headers.get("Client-Id")
-    return service.get_all(client_id)
+    id_client = request.headers.get("Client-Id")
+    return service.get_all(id_client)
 
 
 @company_controller.route("", methods=["POST"])
 @validate()
 def create(body: CompanyDTO):
-    client_id = request.headers.get("Client-Id")
+    id_client = request.headers.get("Client-Id")
 
-    print(client_id)
-    return service.create(body, client_id)
+    print(id_client)
+    return service.create(body, id_client)
 
 
 @company_controller.route("/<id>", methods=["DELETE"])
 @validate()
 def delete(id: str):
-    client_id = request.headers.get("Client-Id")
-    return service.delete(id, client_id)
+    id_client = request.headers.get("Client-Id")
+    return service.delete(id, id_client)

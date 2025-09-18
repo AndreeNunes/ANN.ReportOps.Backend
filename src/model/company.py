@@ -3,7 +3,7 @@ import json
 
 class Company:
 
-    def __init__(self, id: str, name: str, document: str, street: str, number: str, complement: str, neighborhood: str, city: str, state: str, zip_code: str, phone: str, email: str, client_id: str, created_at: str = None, updated_at: str = None):
+    def __init__(self, id: str, name: str, document: str, street: str, number: str, complement: str, neighborhood: str, city: str, state: str, zip_code: str, phone: str, email: str, id_client: str, created_at: str = None, updated_at: str = None):
         self.id = id
         self.name = name
         self.document = document
@@ -16,7 +16,7 @@ class Company:
         self.zip_code = zip_code
         self.phone = phone
         self.email = email
-        self.client_id = client_id
+        self.id_client = id_client
         self.created_at = created_at
         self.updated_at = updated_at
 
@@ -36,7 +36,7 @@ class Company:
             "email": self.email,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
-            "client_id": self.client_id
+            "id_client": self.id_client
         }
 
     def to_json(self):

@@ -12,11 +12,11 @@ class CompanyService:
     def __init__(self):
         self.company_repo = CompanyRepository()
 
-    def get_all(self, client_id: str):
+    def get_all(self, id_client: str):
         conn = get_connection()
 
         try:
-            companies_data = self.company_repo.get_all(conn, client_id)
+            companies_data = self.company_repo.get_all(conn, id_client)
 
             companies = []
             for row in companies_data:
@@ -26,7 +26,7 @@ class CompanyService:
             result = ApiResult.success_result(
                 data=companies,
                 message=f"Encontradas {len(companies)} empresas",
-                metadata={"total_count": len(companies), "client_id": client_id}
+                metadata={"total_count": len(companies), "id_client": id_client}
             )
 
             return result.to_dict(), result.status_code
@@ -41,7 +41,7 @@ class CompanyService:
         finally:
             conn.close()
 
-    def create(self, company_dto: CompanyDTO, client_id: str):
+    def create(self, company_dto: CompanyDTO, id_client: str):
         conn = get_connection()
 
         try:
@@ -58,7 +58,7 @@ class CompanyService:
                 zip_code=company_dto.zip_code,
                 phone=company_dto.phone,
                 email=company_dto.email,
-                client_id=client_id
+                id_client=id_client
             )
 
             self.company_repo.create(company, conn)
@@ -81,7 +81,7 @@ class CompanyService:
         finally:
             conn.close()
 
-    def delete(self, id: str, client_id: str):
+    def delete(self, id: str, id_client: str):
         conn = get_connection()
 
         try:

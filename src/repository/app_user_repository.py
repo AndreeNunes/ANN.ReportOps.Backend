@@ -19,9 +19,9 @@ class AppUserRepository:
     def create(self, user: AppUser, conn):
         cursor = conn.cursor()
 
-        sql = "INSERT INTO APP_USER (id, email, password, name, document, client_id) VALUES (uuid(), %s, %s, %s, %s, %s)"
+        sql = "INSERT INTO APP_USER (id, email, password, name, document, id_client, created_at, updated_at) VALUES (uuid(), %s, %s, %s, %s, %s, NOW(), NOW())"
 
-        cursor.execute(sql, (user.email, user.password, user.name, user.document, user.client_id))
+        cursor.execute(sql, (user.email, user.password, user.name, user.document, user.id_client))
 
         user.id = cursor.lastrowid
 

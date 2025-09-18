@@ -1,5 +1,6 @@
 from flask import Blueprint, request
 from flask_pydantic import validate
+from src.dto.report_reference_dto import ReportReferenceDTO
 from src.dto.report_dto import ReportDTO
 from src.service.report_service import ReportService
 
@@ -21,6 +22,15 @@ def create(body: ReportDTO):
 
     print(app_user_id)
     return service.create(body, app_user_id)
+
+
+@report_controller.route("/reference", methods=["POST"])
+@validate()
+def create_reference(body: ReportReferenceDTO):
+    app_user_id = request.headers.get("App-User-Id")
+
+    print(app_user_id)
+    return service.create_reference(body, app_user_id)
 
 
 @report_controller.route("/<id>", methods=["DELETE"])
