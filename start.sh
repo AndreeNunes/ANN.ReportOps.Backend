@@ -9,4 +9,4 @@ if [ -f .env ]; then
 fi
 
 # Executar a aplicação
-python3 app.py
+python3 main.py
