@@ -13,4 +13,4 @@ app.register_blueprint(equipament_controller, url_prefix="/v1/equipament")
 app.register_blueprint(ordem_service_attachment_controller, url_prefix="/v1/ordem-service-attachment")
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=8080, debug=True)
