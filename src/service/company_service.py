@@ -18,15 +18,10 @@ class CompanyService:
         try:
             companies_data = self.company_repo.get_all(conn, id_client)
 
-            companies = []
-            for row in companies_data:
-                company = Company(**row)
-                companies.append(company.to_dict())
-
             result = ApiResult.success_result(
-                data=companies,
-                message=f"Encontradas {len(companies)} empresas",
-                metadata={"total_count": len(companies), "id_client": id_client}
+                data=companies_data,
+                message=f"Encontradas {len(companies_data)} empresas",
+                metadata={"total_count": len(companies_data), "id_client": id_client}
             )
 
             return result.to_dict(), result.status_code
@@ -37,6 +32,7 @@ class CompanyService:
                 status_code=500,
                 errors=[str(e)]
             )
+            
             return result.to_dict(), result.status_code
         finally:
             conn.close()

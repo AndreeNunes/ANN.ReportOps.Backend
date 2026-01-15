@@ -27,8 +27,10 @@ class AuthenticateService:
             jwt_service = JwtService()
 
             token = jwt_service.generate_token({
-                "user_id": user.id,
+                "name": user.name,
+                "app_user_id": user.id,
                 "email": user.email,
+                "client_id": user.id_client,
                 "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=2)
             })
 

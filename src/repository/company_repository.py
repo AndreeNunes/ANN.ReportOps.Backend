@@ -4,10 +4,10 @@ from src.model.company import Company
 
 
 class CompanyRepository:
-    def get_all(self, conn, id_client: str):
+    def get_all(self, conn, client_id: str):
         cursor = conn.cursor(dictionary=True)
-
-        cursor.execute("SELECT * FROM COMPANY WHERE id_client = %s", (id_client,))
+        
+        cursor.execute("SELECT * FROM COMPANY WHERE client_id = %s", (client_id,))
 
         companies_data = cursor.fetchall()
 

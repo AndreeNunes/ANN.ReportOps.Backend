@@ -6,7 +6,7 @@ class JwtService:
     def __init__(self):
         self.secret_key = "sua_chave_secreta"
         self.algorithm = "HS256"
-        self.expires_hours = 2
+        self.expires_hours = 168
 
     def generate_token(self, payload: dict):
         payload = payload.copy()

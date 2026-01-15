@@ -16,3 +16,4 @@ class CompanyDTO(BaseModel):
     zip_code: Optional[str] = None
     phone: Optional[str] = None
     email: Optional[str] = None
+ 
