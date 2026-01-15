@@ -7,7 +7,7 @@ from src.dto.equipament_dto import EquipamentDTO
 class Equipament:
     def __init__(self, id: str = None, 
         name: str = None, 
-        manufacture_date: datetime = None, 
+        manufacture_date: str = None, 
         compressor_unit_model: str = None, 
         hmi_model: str = None, 
         supply_voltage: str = None, 
@@ -51,7 +51,6 @@ class Equipament:
         }
 
     def dto_to_model(self, dto: EquipamentDTO):
-        print("dto", dto.model_dump(exclude_unset=True))
         for key, value in dto.model_dump(exclude_unset=True).items():
             if hasattr(self, key):
                 setattr(self, key, value)

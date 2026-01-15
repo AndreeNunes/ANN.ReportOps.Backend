@@ -6,7 +6,7 @@ from datetime import datetime
 class EquipamentDTO(BaseModel):
     id: Optional[str] = None
     name: Optional[str] = None
-    manufacture_date: Optional[datetime] = None
+    manufacture_date: Optional[str] = None
     compressor_unit_model: Optional[str] = None
     hmi_model: Optional[str] = None
     supply_voltage: Optional[str] = None

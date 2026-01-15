@@ -33,9 +33,7 @@ class EquipamentService:
 
         try:
             equipament: Equipament = Equipament().dto_to_model(equipament_dto)
-            print("chegou ate aqui")
             equipament.company_id = company_id
-            print("equipament", equipament.to_dict())
             self.equipament_repo.add(equipament, conn)
             conn.commit()
 
