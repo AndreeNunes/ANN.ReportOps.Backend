@@ -30,6 +30,7 @@ class OrdemService:
         rr_lubricating_oil_level=None,
         rr_oil_stock_quantity=None,
         rr_oil_model=None,
+        rr_oil_type=None,
         rr_supply_voltage_under_load=None,
         rr_supply_voltage_unloaded=None,
         rr_service_factor_current=None,
@@ -83,6 +84,7 @@ class OrdemService:
         self.rr_lubricating_oil_level = rr_lubricating_oil_level
         self.rr_oil_stock_quantity = rr_oil_stock_quantity
         self.rr_oil_model = rr_oil_model
+        self.rr_oil_type = rr_oil_type
         self.rr_supply_voltage_under_load = rr_supply_voltage_under_load
         self.rr_supply_voltage_unloaded = rr_supply_voltage_unloaded
         self.rr_service_factor_current = rr_service_factor_current

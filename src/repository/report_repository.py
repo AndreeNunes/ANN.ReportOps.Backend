@@ -84,6 +84,7 @@ class ReportRepository:
                     rr_lubricating_oil_level,
                     rr_oil_stock_quantity,
                     rr_oil_model,
+                    rr_oil_type,
                     rr_supply_voltage_under_load,
                     rr_supply_voltage_unloaded,
                     rr_service_factor_current,
@@ -116,7 +117,7 @@ class ReportRepository:
                 ) VALUES (
                     %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
                     %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
-                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
                 )
             """
 
@@ -144,6 +145,7 @@ class ReportRepository:
                 ordem_service.rr_lubricating_oil_level,
                 ordem_service.rr_oil_stock_quantity,
                 ordem_service.rr_oil_model,
+                ordem_service.rr_oil_type,
                 ordem_service.rr_supply_voltage_under_load,
                 ordem_service.rr_supply_voltage_unloaded,
                 ordem_service.rr_service_factor_current,
@@ -210,6 +212,7 @@ class ReportRepository:
                 rr_lubricating_oil_level = %s,
                 rr_oil_stock_quantity = %s,
                 rr_oil_model = %s,
+                rr_oil_type = %s,
                 rr_supply_voltage_under_load = %s,
                 rr_supply_voltage_unloaded = %s,
                 rr_service_factor_current = %s,
@@ -265,6 +268,7 @@ class ReportRepository:
             ordem_service.rr_lubricating_oil_level,
             ordem_service.rr_oil_stock_quantity,
             ordem_service.rr_oil_model,
+            ordem_service.rr_oil_type,
             ordem_service.rr_supply_voltage_under_load,
             ordem_service.rr_supply_voltage_unloaded,
             ordem_service.rr_service_factor_current,

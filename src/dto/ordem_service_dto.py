@@ -32,6 +32,7 @@ class OrdemServiceDTO(BaseModel):
     rr_lubricating_oil_level: Optional[str] = None
     rr_oil_stock_quantity: Optional[str] = None
     rr_oil_model: Optional[str] = None
+    rr_oil_type: Optional[str] = None
     rr_supply_voltage_under_load: Optional[str] = None
     rr_supply_voltage_unloaded: Optional[str] = None
     rr_service_factor_current: Optional[str] = None
