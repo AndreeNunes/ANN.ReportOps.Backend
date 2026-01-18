@@ -92,10 +92,8 @@ class ReportRepository:
                     rr_fan_motor_current,
                     rr_compressor_operating_temperature,
                     rr_dryer_current,
-                    rr_motor_lubrication_data,
                     rr_dew_point_temperature,
                     rr_ambient_temperature,
-                    rr_coalescing_filter_model,
                     cr_hot_air_duct_ok,
                     cr_room_temp_vent_ok,
                     cr_room_notes,
@@ -118,7 +116,7 @@ class ReportRepository:
                 ) VALUES (
                     %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
                     %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
-                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
                 )
             """
 
@@ -154,10 +152,8 @@ class ReportRepository:
                 ordem_service.rr_fan_motor_current,
                 ordem_service.rr_compressor_operating_temperature,
                 ordem_service.rr_dryer_current,
-                ordem_service.rr_motor_lubrication_data,
                 ordem_service.rr_dew_point_temperature,
                 ordem_service.rr_ambient_temperature,
-                ordem_service.rr_coalescing_filter_model,
                 ordem_service.cr_hot_air_duct_ok,
                 ordem_service.cr_room_temp_vent_ok,
                 ordem_service.cr_room_notes,
@@ -222,10 +218,8 @@ class ReportRepository:
                 rr_fan_motor_current = %s,
                 rr_compressor_operating_temperature = %s,
                 rr_dryer_current = %s,
-                rr_motor_lubrication_data = %s,
                 rr_dew_point_temperature = %s,
                 rr_ambient_temperature = %s,
-                rr_coalescing_filter_model = %s,
                 cr_hot_air_duct_ok = %s,
                 cr_room_temp_vent_ok = %s,
                 cr_room_notes = %s,
@@ -279,10 +273,8 @@ class ReportRepository:
             ordem_service.rr_fan_motor_current,
             ordem_service.rr_compressor_operating_temperature,
             ordem_service.rr_dryer_current,
-            ordem_service.rr_motor_lubrication_data,
             ordem_service.rr_dew_point_temperature,
             ordem_service.rr_ambient_temperature,
-            ordem_service.rr_coalescing_filter_model,
             ordem_service.cr_hot_air_duct_ok,
             ordem_service.cr_room_temp_vent_ok,
             ordem_service.cr_room_notes,

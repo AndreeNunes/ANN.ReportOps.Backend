@@ -40,10 +40,8 @@ class OrdemServiceDTO(BaseModel):
     rr_fan_motor_current: Optional[str] = None
     rr_compressor_operating_temperature: Optional[str] = None
     rr_dryer_current: Optional[str] = None
-    rr_motor_lubrication_data: Optional[str] = None
     rr_dew_point_temperature: Optional[str] = None
     rr_ambient_temperature: Optional[str] = None
-    rr_coalescing_filter_model: Optional[str] = None
 
     cr_hot_air_duct_ok: Optional[bool] = None
     cr_room_temp_vent_ok: Optional[bool] = None

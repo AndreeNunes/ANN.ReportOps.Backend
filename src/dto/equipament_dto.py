@@ -14,4 +14,6 @@ class EquipamentDTO(BaseModel):
     serial_number: Optional[str] = None
     inverter_softstarter_brand_model: Optional[str] = None
     working_pressure: Optional[str] = None
+    coalescing_filter_model: Optional[str] = None
+    motor_lubrication_data: Optional[str] = None
     control_voltage: Optional[str] = None

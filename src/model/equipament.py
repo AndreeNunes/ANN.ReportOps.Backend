@@ -15,6 +15,8 @@ class Equipament:
         serial_number: str = None,      
         inverter_softstarter_brand_model: str = None,    
         working_pressure: str = None,        
+        coalescing_filter_model: str = None,
+        motor_lubrication_data: str = None,
         control_voltage: str = None, company_id: str = None, 
         created_at: datetime = None, 
         updated_at: datetime = None):
@@ -28,6 +30,8 @@ class Equipament:
         self.serial_number = serial_number
         self.inverter_softstarter_brand_model = inverter_softstarter_brand_model
         self.working_pressure = working_pressure
+        self.coalescing_filter_model = coalescing_filter_model
+        self.motor_lubrication_data = motor_lubrication_data
         self.control_voltage = control_voltage
         self.company_id = company_id,
         self.created_at = created_at if created_at else datetime.now()
@@ -46,6 +50,8 @@ class Equipament:
             "serial_number": self.serial_number,
             "inverter_softstarter_brand_model": self.inverter_softstarter_brand_model,
             "working_pressure": self.working_pressure,
+            "coalescing_filter_model": self.coalescing_filter_model,
+            "motor_lubrication_data": self.motor_lubrication_data,
             "control_voltage": self.control_voltage,
             "company_id": self.company_id
         }

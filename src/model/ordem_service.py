@@ -38,10 +38,8 @@ class OrdemService:
         rr_fan_motor_current=None,
         rr_compressor_operating_temperature=None,
         rr_dryer_current=None,
-        rr_motor_lubrication_data=None,
         rr_dew_point_temperature=None,
         rr_ambient_temperature=None,
-        rr_coalescing_filter_model=None,
         cr_hot_air_duct_ok=None,
         cr_room_temp_vent_ok=None,
         cr_room_notes=None,
@@ -93,10 +91,8 @@ class OrdemService:
         self.rr_fan_motor_current = rr_fan_motor_current
         self.rr_compressor_operating_temperature = rr_compressor_operating_temperature
         self.rr_dryer_current = rr_dryer_current
-        self.rr_motor_lubrication_data = rr_motor_lubrication_data
         self.rr_dew_point_temperature = rr_dew_point_temperature
         self.rr_ambient_temperature = rr_ambient_temperature
-        self.rr_coalescing_filter_model = rr_coalescing_filter_model
         self.cr_hot_air_duct_ok = cr_hot_air_duct_ok
         self.cr_room_temp_vent_ok = cr_room_temp_vent_ok
         self.cr_room_notes = cr_room_notes
