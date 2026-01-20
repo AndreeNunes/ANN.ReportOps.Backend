@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel, EmailStr, constr
 
 
@@ -6,4 +7,5 @@ class AppUserDTO(BaseModel):
     password: constr(min_length=6)
     name: constr(min_length=2, max_length=100)
     document: constr(min_length=5, max_length=30)
-    id_client: str
+    id_client: Optional[str] = None
+    code: Optional[str] = None

@@ -1,10 +1,11 @@
+import os
 import jwt
 import datetime
 
 
 class JwtService:
     def __init__(self):
-        self.secret_key = "sua_chave_secreta"
+        self.secret_key = os.getenv("JWT_SECRET_KEY")
         self.algorithm = "HS256"
         self.expires_hours = 168
 
