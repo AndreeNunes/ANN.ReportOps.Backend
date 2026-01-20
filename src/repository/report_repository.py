@@ -96,6 +96,7 @@ class ReportRepository:
                     rr_dew_point_temperature,
                     rr_ambient_temperature,
                     cr_hot_air_duct_ok,
+                    cr_hot_air_duct_regularized,
                     cr_room_temp_vent_ok,
                     cr_room_notes,
                     cr_install_env_condition,
@@ -117,7 +118,7 @@ class ReportRepository:
                 ) VALUES (
                     %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
                     %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
-                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
                 )
             """
 
@@ -157,6 +158,7 @@ class ReportRepository:
                 ordem_service.rr_dew_point_temperature,
                 ordem_service.rr_ambient_temperature,
                 ordem_service.cr_hot_air_duct_ok,
+                ordem_service.cr_hot_air_duct_regularized,
                 ordem_service.cr_room_temp_vent_ok,
                 ordem_service.cr_room_notes,
                 ordem_service.cr_install_env_condition,
@@ -224,6 +226,7 @@ class ReportRepository:
                 rr_dew_point_temperature = %s,
                 rr_ambient_temperature = %s,
                 cr_hot_air_duct_ok = %s,
+                cr_hot_air_duct_regularized = %s,
                 cr_room_temp_vent_ok = %s,
                 cr_room_notes = %s,
                 cr_install_env_condition = %s,
@@ -280,6 +283,7 @@ class ReportRepository:
             ordem_service.rr_dew_point_temperature,
             ordem_service.rr_ambient_temperature,
             ordem_service.cr_hot_air_duct_ok,
+            ordem_service.cr_hot_air_duct_regularized,
             ordem_service.cr_room_temp_vent_ok,
             ordem_service.cr_room_notes,
             ordem_service.cr_install_env_condition,

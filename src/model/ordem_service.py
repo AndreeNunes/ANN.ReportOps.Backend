@@ -42,6 +42,7 @@ class OrdemService:
         rr_dew_point_temperature=None,
         rr_ambient_temperature=None,
         cr_hot_air_duct_ok=None,
+        cr_hot_air_duct_regularized=None,
         cr_room_temp_vent_ok=None,
         cr_room_notes=None,
         cr_install_env_condition=None,
@@ -96,6 +97,7 @@ class OrdemService:
         self.rr_dew_point_temperature = rr_dew_point_temperature
         self.rr_ambient_temperature = rr_ambient_temperature
         self.cr_hot_air_duct_ok = cr_hot_air_duct_ok
+        self.cr_hot_air_duct_regularized = cr_hot_air_duct_regularized
         self.cr_room_temp_vent_ok = cr_room_temp_vent_ok
         self.cr_room_notes = cr_room_notes
         self.cr_install_env_condition = cr_install_env_condition
