@@ -46,3 +46,68 @@ class EquipamentRepository:
         cursor.close()
 
         return equipament
+
+    def get_by_id(self, conn, id: str, company_id: str):
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute(
+            "SELECT * FROM EQUIPAMENT WHERE id = %s AND company_id = %s",
+            (id, company_id)
+        )
+        equipament = cursor.fetchone()
+        cursor.close()
+
+        return equipament
+
+    def update(self, equipament: Equipament, conn):
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            UPDATE 
+                EQUIPAMENT
+            SET
+                name = %s,
+                manufacture_date = %s,
+                compressor_unit_model = %s,
+                hmi_model = %s,
+                supply_voltage = %s,
+                intake_solenoid_voltage = %s,
+                serial_number = %s,
+                inverter_softstarter_brand_model = %s,
+                working_pressure = %s,
+                coalescing_filter_model = %s,
+                motor_lubrication_data = %s,
+                control_voltage = %s,
+                updated_at = %s
+            WHERE id = %s AND company_id = %s
+            """,
+            (
+                equipament.name,
+                equipament.manufacture_date,
+                equipament.compressor_unit_model,
+                equipament.hmi_model,
+                equipament.supply_voltage,
+                equipament.intake_solenoid_voltage,
+                equipament.serial_number,
+                equipament.inverter_softstarter_brand_model,
+                equipament.working_pressure,
+                equipament.coalescing_filter_model,
+                equipament.motor_lubrication_data,
+                equipament.control_voltage,
+                equipament.updated_at,
+                equipament.id,
+                equipament.company_id
+            )
+        )
+        conn.commit()
+        cursor.close()
+
+        return equipament
+
+    def delete(self, conn, id: str, company_id: str):
+        cursor = conn.cursor()
+        cursor.execute(
+            "DELETE FROM EQUIPAMENT WHERE id = %s AND company_id = %s",
+            (id, company_id)
+        )
+        conn.commit()
+        cursor.close()
