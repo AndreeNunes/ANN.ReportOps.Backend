@@ -48,7 +48,7 @@ class OrdemServiceDTO(BaseModel):
     cr_hot_air_duct_regularized: Optional[bool] = None
     cr_room_temp_vent_ok: Optional[bool] = None
     cr_room_notes: Optional[str] = None
-    cr_install_env_condition: Optional[bool] = None
+    cr_install_env_condition: Optional[str] = None
     cr_accident_risk: Optional[bool] = None
     cr_electrical_install_ok: Optional[bool] = None
     cr_grounding_ok: Optional[bool] = None
