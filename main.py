@@ -10,7 +10,6 @@ from src.controller.client_controller import client_controller
 
 app = Flask(__name__)
 
-CORS(app)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 app.register_blueprint(authenticate_controller, url_prefix="/v1")
