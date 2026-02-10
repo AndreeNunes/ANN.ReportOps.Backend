@@ -10,7 +10,6 @@ class OrdemServiceDTO(BaseModel):
     id_company: str
 
     id_equipament: Optional[str] = None
-    eq_current_hour_meter: Optional[str] = None
 
     cga_reason_visit: Optional[str] = None
     cga_reported_defect: Optional[str] = None

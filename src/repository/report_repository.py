@@ -113,12 +113,11 @@ class ReportRepository:
                     closing_start_time,
                     closing_end_time,
                     closing_responsible,
-                    eq_current_hour_meter,
                     id_equipament
                 ) VALUES (
                     %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
                     %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
-                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
                 )
             """
 
@@ -175,7 +174,6 @@ class ReportRepository:
                 ordem_service.closing_start_time,
                 ordem_service.closing_end_time,
                 ordem_service.closing_responsible,
-                ordem_service.eq_current_hour_meter,
                 ordem_service.id_equipament
             )
 
@@ -243,7 +241,6 @@ class ReportRepository:
                 closing_start_time = %s,
                 closing_end_time = %s,
                 closing_responsible = %s,
-                eq_current_hour_meter = %s,
                 id_equipament = %s
             WHERE id = %s
         """
@@ -300,7 +297,6 @@ class ReportRepository:
             ordem_service.closing_start_time,
             ordem_service.closing_end_time,
             ordem_service.closing_responsible,
-            ordem_service.eq_current_hour_meter,
             ordem_service.id_equipament,
             ordem_service.id
         )

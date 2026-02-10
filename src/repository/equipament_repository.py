@@ -21,7 +21,7 @@ class EquipamentRepository:
                 coalescing_filter_model, motor_lubrication_data,
                 control_voltage, company_id, created_at, updated_at
             )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """,
             (
                 equipament.id,
