@@ -7,7 +7,8 @@ from src.dto.equipament_dto import EquipamentDTO
 class Equipament:
     def __init__(self, id: str = None, 
         name: str = None, 
-        manufacture_date: str = None, 
+        manufacture_date: str = None,
+        current_hour_meter: str = None,
         compressor_unit_model: str = None, 
         hmi_model: str = None, 
         supply_voltage: str = None, 
@@ -23,6 +24,7 @@ class Equipament:
         self.id = id if id else str(uuid.uuid4())
         self.name = name
         self.manufacture_date = manufacture_date
+        self.current_hour_meter = current_hour_meter
         self.compressor_unit_model = compressor_unit_model
         self.hmi_model = hmi_model
         self.supply_voltage = supply_voltage
@@ -43,6 +45,7 @@ class Equipament:
             "id": self.id,
             "name": self.name,
             "manufacture_date": self.manufacture_date,
+            "current_hour_meter": self.current_hour_meter,
             "compressor_unit_model": self.compressor_unit_model,
             "hmi_model": self.hmi_model,
             "supply_voltage": self.supply_voltage,
