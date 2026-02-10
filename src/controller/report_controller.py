@@ -20,6 +20,12 @@ def get_by_id(id: str):
     app_user_id = request.headers.get("App-User-Id")
     return service.get_by_id(id, app_user_id)
 
+@report_controller.route("/ids", methods=["GET"])
+@validate()
+def get_all_ids():
+    app_user_id = request.headers.get("App-User-Id")
+    return service.get_all_ids(app_user_id)
+
 @report_controller.route("", methods=["POST"])
 @validate()
 def create(body: ReportDTO):

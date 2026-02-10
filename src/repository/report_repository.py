@@ -15,6 +15,13 @@ class ReportRepository:
 
         return reports
 
+    def get_all_ids(self, app_user_id, conn):
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT id FROM REPORT WHERE id_app_user = %s", (app_user_id,))
+        rows = cursor.fetchall()
+        cursor.close()
+        return [row["id"] for row in rows]
+
     def get_by_id_and_app_user_id(self, id, app_user_id, conn):
         cursor = conn.cursor(dictionary=True)
         cursor.execute("SELECT * FROM REPORT WHERE id = %s AND id_app_user = %s", (id, app_user_id))

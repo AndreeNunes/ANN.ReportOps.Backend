@@ -16,6 +16,19 @@ class AppUserRepository:
 
         return AppUser(**user) if user else None
 
+    def find_by_id(self, id: str, conn):
+        cursor = conn.cursor(dictionary=True)
+
+        sql = "SELECT * FROM APP_USER WHERE id = %s"
+
+        cursor.execute(sql, (id,))
+
+        user = cursor.fetchone()
+
+        cursor.close()
+
+        return AppUser(**user) if user else None
+
     def create(self, user: AppUser, conn):
         cursor = conn.cursor()
 
