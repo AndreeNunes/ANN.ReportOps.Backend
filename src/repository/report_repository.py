@@ -22,17 +22,24 @@ class ReportRepository:
         cursor.close()
         return [row["id"] for row in rows]
 
-    def get_by_id_and_app_user_id(self, id, app_user_id, conn):
+    def get_all_ids_by_status(self, id_client, status, conn):
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM REPORT WHERE id = %s AND id_app_user = %s", (id, app_user_id))
+        cursor.execute("SELECT id FROM REPORT WHERE id_client = %s AND status = %s", (id_client, status))
+        rows = cursor.fetchall()
+        cursor.close()
+        return [row["id"] for row in rows]
+
+    def get_by_id_client_and_id(self, id, id_client, conn):
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM REPORT WHERE id = %s AND id_client = %s", (id, id_client))
         report = cursor.fetchone()
         cursor.close()
 
         return Report(**report) if report else None
 
-    def get_by_id_reference_and_app_user_id(self, id_reference, app_user_id, conn):
+    def get_by_id_reference_and_id_client(self, id_reference, id_client, conn):
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM REPORT WHERE id_reference = %s AND id_app_user = %s", (id_reference, app_user_id))
+        cursor.execute("SELECT * FROM REPORT WHERE id_reference = %s AND id_client = %s", (id_reference, id_client))
         report = cursor.fetchone()
         cursor.close()
 
@@ -48,9 +55,60 @@ class ReportRepository:
 
         return ordem_service
 
+    def get_ordem_services_by_report_ids(self, report_ids, id_client, conn):
+        if not report_ids:
+            return []
+        
+        cursor = conn.cursor(dictionary=True)
+        placeholders = ", ".join(["%s"] * len(report_ids))
+        
+        sql = f"""
+            SELECT
+                r.id AS report_id,
+                os.*,
+                c.id AS company_id,
+                c.name AS company_name,
+                c.document AS company_document,
+                c.street AS company_street,
+                c.number AS company_number,
+                c.complement AS company_complement,
+                c.neighborhood AS company_neighborhood,
+                c.city AS company_city,
+                c.state AS company_state,
+                c.zip_code AS company_zip_code,
+                c.phone AS company_phone,
+                c.email AS company_email,
+                e.id AS equipament_id,
+                e.name AS equipament_name,
+                e.manufacture_date AS equipament_manufacture_date,
+                e.current_hour_meter AS equipament_current_hour_meter,
+                e.compressor_unit_model AS equipament_compressor_unit_model,
+                e.hmi_model AS equipament_hmi_model,
+                e.supply_voltage AS equipament_supply_voltage,
+                e.intake_solenoid_voltage AS equipament_intake_solenoid_voltage,
+                e.serial_number AS equipament_serial_number,
+                e.inverter_softstarter_brand_model AS equipament_inverter_softstarter_brand_model,
+                e.working_pressure AS equipament_working_pressure,
+                e.coalescing_filter_model AS equipament_coalescing_filter_model,
+                e.motor_lubrication_data AS equipament_motor_lubrication_data,
+                e.control_voltage AS equipament_control_voltage
+            FROM REPORT r
+            INNER JOIN ORDEM_SERVICE os ON os.id = r.id_reference
+            INNER JOIN COMPANY c ON c.id = os.id_company
+            LEFT JOIN EQUIPAMENT e ON e.id = os.id_equipament
+            WHERE r.id_client = %s
+              AND r.id IN ({placeholders})
+        """
+        
+        params = [id_client] + list(report_ids)
+        cursor.execute(sql, params)
+        rows = cursor.fetchall()
+        cursor.close()
+        return rows
+
     def create(self, report, conn):
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO REPORT (id, type, status, id_app_user, id_reference, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, NOW(), NOW())", (report.id, report.type, report.status, report.id_app_user, report.id_reference))
+        cursor.execute("INSERT INTO REPORT (id, type, status, id_client, id_app_user, id_reference, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, NOW(), NOW())", (report.id, report.type, report.status, report.id_client, report.id_app_user, report.id_reference))
         conn.commit()
         cursor.close()
 
