@@ -19,7 +19,6 @@ def get_all():
 def create(body: CompanyDTO):
     id_client = request.headers.get("Client-Id")
 
-    print(id_client)
     return service.create(body, id_client)
 
 
