@@ -10,7 +10,7 @@ class Equipament:
         manufacture_date: str = None,
         current_hour_meter: str = None,
         compressor_unit_model: str = None, 
-        hmi_model: str = None, 
+        ihm_model: str = None, 
         supply_voltage: str = None, 
         intake_solenoid_voltage: str = None,        
         serial_number: str = None,      
@@ -26,7 +26,7 @@ class Equipament:
         self.manufacture_date = manufacture_date
         self.current_hour_meter = current_hour_meter
         self.compressor_unit_model = compressor_unit_model
-        self.hmi_model = hmi_model
+        self.ihm_model = ihm_model
         self.supply_voltage = supply_voltage
         self.intake_solenoid_voltage = intake_solenoid_voltage
         self.serial_number = serial_number
@@ -47,7 +47,7 @@ class Equipament:
             "manufacture_date": self.manufacture_date,
             "current_hour_meter": self.current_hour_meter,
             "compressor_unit_model": self.compressor_unit_model,
-            "hmi_model": self.hmi_model,
+            "ihm_model": self.ihm_model,
             "supply_voltage": self.supply_voltage,
             "intake_solenoid_voltage": self.intake_solenoid_voltage,
             "serial_number": self.serial_number,

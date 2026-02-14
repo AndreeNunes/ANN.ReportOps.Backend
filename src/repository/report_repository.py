@@ -83,7 +83,7 @@ class ReportRepository:
                 e.manufacture_date AS equipament_manufacture_date,
                 e.current_hour_meter AS equipament_current_hour_meter,
                 e.compressor_unit_model AS equipament_compressor_unit_model,
-                e.hmi_model AS equipament_hmi_model,
+                e.ihm_model AS equipament_ihm_model,
                 e.supply_voltage AS equipament_supply_voltage,
                 e.intake_solenoid_voltage AS equipament_intake_solenoid_voltage,
                 e.serial_number AS equipament_serial_number,
@@ -133,7 +133,6 @@ class ReportRepository:
                     updated_at,
                     cga_reason_visit,
                     cga_reported_defect,
-                    cga_probable_cause,
                     cga_solution_applied,
                     cga_replaced_parts,
                     cga_parts_to_replace,
@@ -182,7 +181,7 @@ class ReportRepository:
                 ) VALUES (
                     %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
                     %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
-                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
                 )
             """
 
@@ -194,7 +193,6 @@ class ReportRepository:
                 ordem_service.updated_at,
                 ordem_service.cga_reason_visit,
                 ordem_service.cga_reported_defect,
-                ordem_service.cga_probable_cause,
                 ordem_service.cga_solution_applied,
                 ordem_service.cga_replaced_parts,
                 ordem_service.cga_parts_to_replace,
@@ -261,7 +259,6 @@ class ReportRepository:
                 updated_at = %s,
                 cga_reason_visit = %s,
                 cga_reported_defect = %s,
-                cga_probable_cause = %s,
                 cga_solution_applied = %s,
                 cga_replaced_parts = %s,
                 cga_parts_to_replace = %s,
@@ -317,7 +314,6 @@ class ReportRepository:
             ordem_service.updated_at,
             ordem_service.cga_reason_visit,
             ordem_service.cga_reported_defect,
-            ordem_service.cga_probable_cause,
             ordem_service.cga_solution_applied,
             ordem_service.cga_replaced_parts,
             ordem_service.cga_parts_to_replace,

@@ -15,7 +15,7 @@ class EquipamentRepository:
         cursor.execute(
             """
             INSERT INTO EQUIPAMENT (
-                id, name, manufacture_date, current_hour_meter, compressor_unit_model, hmi_model,
+                id, name, manufacture_date, current_hour_meter, compressor_unit_model, ihm_model,
                 supply_voltage, intake_solenoid_voltage, serial_number,
                 inverter_softstarter_brand_model, working_pressure,
                 coalescing_filter_model, motor_lubrication_data,
@@ -29,7 +29,7 @@ class EquipamentRepository:
                 equipament.manufacture_date,
                 equipament.current_hour_meter,
                 equipament.compressor_unit_model,
-                equipament.hmi_model,
+                equipament.ihm_model,
                 equipament.supply_voltage,
                 equipament.intake_solenoid_voltage,
                 equipament.serial_number,
@@ -70,7 +70,7 @@ class EquipamentRepository:
                 manufacture_date = %s,
                 current_hour_meter = %s,
                 compressor_unit_model = %s,
-                hmi_model = %s,
+                ihm_model = %s,
                 supply_voltage = %s,
                 intake_solenoid_voltage = %s,
                 serial_number = %s,
@@ -87,7 +87,7 @@ class EquipamentRepository:
                 equipament.manufacture_date,
                 equipament.current_hour_meter,
                 equipament.compressor_unit_model,
-                equipament.hmi_model,
+                equipament.ihm_model,
                 equipament.supply_voltage,
                 equipament.intake_solenoid_voltage,
                 equipament.serial_number,

@@ -9,7 +9,7 @@ class EquipamentDTO(BaseModel):
     manufacture_date: Optional[str] = None
     current_hour_meter: Optional[str] = None
     compressor_unit_model: Optional[str] = None
-    hmi_model: Optional[str] = None
+    ihm_model: Optional[str] = None
     supply_voltage: Optional[str] = None
     intake_solenoid_voltage: Optional[str] = None
     serial_number: Optional[str] = None

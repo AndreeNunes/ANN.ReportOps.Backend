@@ -13,7 +13,6 @@ class OrdemServiceDTO(BaseModel):
 
     cga_reason_visit: Optional[str] = None
     cga_reported_defect: Optional[str] = None
-    cga_probable_cause: Optional[str] = None
     cga_solution_applied: Optional[str] = None
     cga_replaced_parts: Optional[str] = None
     cga_parts_to_replace: Optional[str] = None
