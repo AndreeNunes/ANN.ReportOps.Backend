@@ -173,7 +173,15 @@ class ReportService:
         rows = self.report_repository.get_ordem_services_by_report_ids(report_ids, id_client, conn)
 
         def map_row(row: Dict[str, Any]) -> Dict[str, Any]:
-            os_data = {k: v for k, v in row.items() if not k.startswith("company_") and not k.startswith("equipament_") and k != "report_id"}
+            # Dados principais de ORDEM_SERVICE (exclui colunas de company/equipament e colunas de report)
+            os_data = {
+                k: v
+                for k, v in row.items()
+                if not k.startswith("company_")
+                and not k.startswith("equipament_")
+                and not k.startswith("report_")
+                and k != "report_id"
+            }
             
             company_data = {k[len("company_"):]: v for k, v in row.items() if k.startswith("company_")}
             equipament_data = {k[len("equipament_"):]: v for k, v in row.items() if k.startswith("equipament_")}
@@ -181,10 +189,26 @@ class ReportService:
             company_value = company_data if any(v is not None for v in company_data.values()) else None
             equipament_value = equipament_data if any(v is not None for v in equipament_data.values()) else None
 
-            return {
+            ordem_service_value = {
                 **os_data,
                 "company": company_value,
                 "equipament": equipament_value
+            }
+
+            report_value = {
+                "id": row.get("report_id"),
+                "type": row.get("report_type"),
+                "status": row.get("report_status"),
+                "id_client": row.get("report_id_client"),
+                "id_app_user": row.get("report_id_app_user"),
+                "id_reference": row.get("report_id_reference"),
+                "created_at": row.get("report_created_at"),
+                "updated_at": row.get("report_updated_at"),
+            }
+
+            return {
+                "ordem_service": ordem_service_value,
+                "report": report_value
             }
 
         data = [map_row(r) for r in rows]

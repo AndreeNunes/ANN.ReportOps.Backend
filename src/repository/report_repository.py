@@ -65,6 +65,13 @@ class ReportRepository:
         sql = f"""
             SELECT
                 r.id AS report_id,
+                r.type AS report_type,
+                r.status AS report_status,
+                r.id_client AS report_id_client,
+                r.id_app_user AS report_id_app_user,
+                r.id_reference AS report_id_reference,
+                r.created_at AS report_created_at,
+                r.updated_at AS report_updated_at,
                 os.*,
                 c.id AS company_id,
                 c.name AS company_name,
@@ -230,11 +237,12 @@ class ReportRepository:
                     closing_end_time,
                     closing_responsible,
                     id_equipament,
-                    closing_technician_responsible
+                    closing_technician_responsible,
+                    closing_notes
                 ) VALUES (
                     %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
                     %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
-                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
                 )
             """
 
@@ -291,7 +299,8 @@ class ReportRepository:
                 ordem_service.closing_end_time,
                 ordem_service.closing_responsible,
                 ordem_service.id_equipament,
-                ordem_service.closing_technician_responsible
+                ordem_service.closing_technician_responsible,
+                ordem_service.closing_notes
             )
 
         cursor.execute(sql, values)
@@ -358,7 +367,8 @@ class ReportRepository:
                 closing_end_time = %s,
                 closing_responsible = %s,
                 id_equipament = %s,
-                closing_technician_responsible = %s
+                closing_technician_responsible = %s,
+                closing_notes = %s
             WHERE id = %s
         """
 
@@ -415,6 +425,7 @@ class ReportRepository:
             ordem_service.closing_responsible,
             ordem_service.id_equipament,
             ordem_service.closing_technician_responsible,
+            ordem_service.closing_notes,
             ordem_service.id
         )
 

@@ -62,3 +62,4 @@ class OrdemServiceDTO(BaseModel):
     closing_end_time: Optional[datetime] = None
     closing_responsible: Optional[str] = None
     closing_technician_responsible: Optional[str] = None
+    closing_notes: Optional[str] = None

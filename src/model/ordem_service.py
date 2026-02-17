@@ -58,7 +58,8 @@ class OrdemService:
         closing_start_time=None,
         closing_end_time=None,
         closing_responsible=None,
-        closing_technician_responsible=None
+        closing_technician_responsible=None,
+        closing_notes=None
     ):
         self.id = id
         self.OS_number = OS_number
@@ -114,6 +115,7 @@ class OrdemService:
         self.closing_end_time = closing_end_time
         self.closing_responsible = closing_responsible
         self.closing_technician_responsible = closing_technician_responsible
+        self.closing_notes = closing_notes
 
     def dto_to_model(self, dto: OrdemServiceDTO):
         for key, value in dto.model_dump(exclude_unset=True).items():
