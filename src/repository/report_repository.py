@@ -106,6 +106,58 @@ class ReportRepository:
         cursor.close()
         return rows
 
+    def get_ordem_service_ids_by_report_ids(self, report_ids, conn):
+        if not report_ids:
+            return []
+        
+        cursor = conn.cursor(dictionary=True)
+
+        placeholders = ", ".join(["%s"] * len(report_ids))
+
+        sql = f"""
+            SELECT id_reference
+            FROM REPORT
+            WHERE type = %s
+              AND id IN ({placeholders})
+        """
+
+        params = ["ORDEM_SERVICE"] + list(report_ids)
+        cursor.execute(sql, params)
+        rows = cursor.fetchall()
+        cursor.close()
+
+        return [row["id_reference"] for row in rows]
+
+    def bulk_delete_ordem_service_by_ids(self, ordem_service_ids, conn):
+        """
+        Deleta em lote em ORDEM_SERVICE pelos IDs informados.
+        """
+        if not ordem_service_ids:
+            return 0
+        
+        cursor = conn.cursor()
+        placeholders = ", ".join(["%s"] * len(ordem_service_ids))
+        sql = f"DELETE FROM ORDEM_SERVICE WHERE id IN ({placeholders})"
+        cursor.execute(sql, list(ordem_service_ids))
+        affected = cursor.rowcount
+        conn.commit()
+        cursor.close()
+        return affected
+
+    def bulk_delete_reports_by_ids(self, report_ids, conn):
+        if not report_ids:
+            return 0
+        
+        cursor = conn.cursor()
+        placeholders = ", ".join(["%s"] * len(report_ids))
+        sql = f"DELETE FROM REPORT WHERE id IN ({placeholders})"
+        params = list(report_ids)
+        cursor.execute(sql, params)
+        affected = cursor.rowcount
+        conn.commit()
+        cursor.close()
+        return affected
+
     def create(self, report, conn):
         cursor = conn.cursor()
         cursor.execute("INSERT INTO REPORT (id, type, status, id_client, id_app_user, id_reference, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, NOW(), NOW())", (report.id, report.type, report.status, report.id_client, report.id_app_user, report.id_reference))
@@ -177,11 +229,12 @@ class ReportRepository:
                     closing_start_time,
                     closing_end_time,
                     closing_responsible,
-                    id_equipament
+                    id_equipament,
+                    closing_technician_responsible
                 ) VALUES (
                     %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
                     %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
-                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
                 )
             """
 
@@ -237,7 +290,8 @@ class ReportRepository:
                 ordem_service.closing_start_time,
                 ordem_service.closing_end_time,
                 ordem_service.closing_responsible,
-                ordem_service.id_equipament
+                ordem_service.id_equipament,
+                ordem_service.closing_technician_responsible
             )
 
         cursor.execute(sql, values)
@@ -303,7 +357,8 @@ class ReportRepository:
                 closing_start_time = %s,
                 closing_end_time = %s,
                 closing_responsible = %s,
-                id_equipament = %s
+                id_equipament = %s,
+                closing_technician_responsible = %s
             WHERE id = %s
         """
 
@@ -359,6 +414,7 @@ class ReportRepository:
             ordem_service.closing_end_time,
             ordem_service.closing_responsible,
             ordem_service.id_equipament,
+            ordem_service.closing_technician_responsible,
             ordem_service.id
         )
 

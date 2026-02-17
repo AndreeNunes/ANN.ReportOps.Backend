@@ -166,7 +166,7 @@ class ReportService:
         return result.to_dict(), result.status_code
 
     def delete(self, id: str, app_user_id: str):
-        [], 200
+        return self.delete_bulk([id], app_user_id)
 
     def get_ordem_service_by_report_ids(self, id_client: str, report_ids: List[str]):
         conn = get_connection()
@@ -196,3 +196,52 @@ class ReportService:
         )
 
         return result.to_dict(), result.status_code
+
+    def delete_bulk(self, report_ids: List[str]):
+        conn = get_connection()
+
+        try:
+            if not report_ids:
+                result = ApiResult.validation_error_result(
+                    message="Lista de IDs vazia para deleção"
+                )
+                return result.to_dict(), result.status_code
+
+            print("REPORT_IDS", report_ids)
+
+            ordem_service_ids = self.report_repository.get_ordem_service_ids_by_report_ids(
+                report_ids=report_ids,
+                conn=conn
+            )
+
+            print("ORDEM_SERVICE_IDS", ordem_service_ids)
+
+            deleted_ordem_services = self.report_repository.bulk_delete_ordem_service_by_ids(
+                ordem_service_ids,
+                conn
+            )
+
+            deleted_reports = self.report_repository.bulk_delete_reports_by_ids(
+                report_ids=report_ids,
+                conn=conn
+            )
+
+            result = ApiResult.success_result(
+                data={
+                    "deleted_reports": deleted_reports,
+                    "deleted_ordem_services": deleted_ordem_services
+                },
+                message="Deleção em lote concluída",
+                status_code=200
+            )
+
+            return result.to_dict(), result.status_code
+        except Exception as e:
+            result = ApiResult.error_result(
+                message="Erro ao deletar reports/ordem_service em lote",
+                status_code=500,
+                errors=[str(e)]
+            )
+            return result.to_dict(), result.status_code
+        finally:
+            conn.close()

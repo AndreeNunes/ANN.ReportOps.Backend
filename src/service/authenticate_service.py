@@ -63,10 +63,11 @@ class AuthenticateService:
         try:
             derived_client_id = None
 
-            # Se vier código, validar e obter client_id a partir do plano
             if user_dto.code:
                 valid_plans = self.plan_repo.get_all_valid(conn)
+
                 matched_plan = None
+
                 for plan in valid_plans:
                     if bcrypt.checkpw(user_dto.code.encode('utf-8'), plan["access_validate"].encode('utf-8')):
                         matched_plan = plan
@@ -83,6 +84,7 @@ class AuthenticateService:
             else:
                 if not user_dto.id_client:
                     return {"message": "id_client ou code é obrigatório"}, 422
+                    
                 derived_client_id = user_dto.id_client
 
             hashed = bcrypt.hashpw(user_dto.password.encode('utf-8'), bcrypt.gensalt())

@@ -14,7 +14,6 @@ class OrdemService:
         eq_current_hour_meter=None,
         cga_reason_visit=None,
         cga_reported_defect=None,
-        cga_probable_cause=None,
         cga_solution_applied=None,
         cga_replaced_parts=None,
         cga_parts_to_replace=None,
@@ -58,7 +57,8 @@ class OrdemService:
         cr_improvement_suggestions=None,
         closing_start_time=None,
         closing_end_time=None,
-        closing_responsible=None
+        closing_responsible=None,
+        closing_technician_responsible=None
     ):
         self.id = id
         self.OS_number = OS_number
@@ -69,7 +69,6 @@ class OrdemService:
         self.eq_current_hour_meter = eq_current_hour_meter
         self.cga_reason_visit = cga_reason_visit
         self.cga_reported_defect = cga_reported_defect
-        self.cga_probable_cause = cga_probable_cause
         self.cga_solution_applied = cga_solution_applied
         self.cga_replaced_parts = cga_replaced_parts
         self.cga_parts_to_replace = cga_parts_to_replace
@@ -114,6 +113,7 @@ class OrdemService:
         self.closing_start_time = closing_start_time
         self.closing_end_time = closing_end_time
         self.closing_responsible = closing_responsible
+        self.closing_technician_responsible = closing_technician_responsible
 
     def dto_to_model(self, dto: OrdemServiceDTO):
         for key, value in dto.model_dump(exclude_unset=True).items():

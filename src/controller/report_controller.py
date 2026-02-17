@@ -33,6 +33,11 @@ def get_references_by_ids(body: ReportIdsDTO):
     id_client = request.headers.get("Client-Id")
     return service.get_ordem_service_by_report_ids(id_client, body.ids)
 
+@report_controller.route("/bulk", methods=["DELETE"])
+@validate()
+def delete_bulk(body: ReportIdsDTO):
+    return service.delete_bulk(body.ids)
+
 @report_controller.route("", methods=["POST"])
 @validate()
 def create(body: ReportDTO):
