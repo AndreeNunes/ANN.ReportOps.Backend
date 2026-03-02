@@ -77,6 +77,52 @@ class CompanyService:
         finally:
             conn.close()
 
+    def update(self, id: str, company_dto: CompanyDTO, id_client: str):
+        conn = get_connection()
+
+        try:
+            existing = self.company_repo.get_by_id(id, conn)
+
+            if not existing:
+                result = ApiResult.not_found_result("Empresa não encontrada")
+                return result.to_dict(), result.status_code
+
+            company = Company(
+                id=id,
+                name=company_dto.name,
+                document=company_dto.document,
+                street=company_dto.street,
+                number=company_dto.number,
+                complement=company_dto.complement,
+                neighborhood=company_dto.neighborhood,
+                city=company_dto.city,
+                state=company_dto.state,
+                zip_code=company_dto.zip_code,
+                phone=company_dto.phone,
+                email=company_dto.email,
+                id_client=id_client
+            )
+
+            self.company_repo.update(company, conn)
+
+            result = ApiResult.success_result(
+                data=company.to_dict(),
+                message="Empresa atualizada com sucesso",
+                status_code=200
+            )
+
+            return result.to_dict(), result.status_code
+
+        except Exception as e:
+            result = ApiResult.error_result(
+                message="Erro ao atualizar empresa",
+                status_code=500,
+                errors=[str(e)]
+            )
+            return result.to_dict(), result.status_code
+        finally:
+            conn.close()
+
     def delete(self, id: str, id_client: str):
         conn = get_connection()
 

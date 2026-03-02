@@ -26,6 +26,18 @@ class CompanyRepository:
             company.id, company.name, company.document, company.street, company.number, company.complement, company.neighborhood, company.city, company.state, company.zip_code, company.phone, company.email, company.id_client))
         conn.commit()
 
+    def update(self, company, conn):
+        cursor = conn.cursor()
+        cursor.execute(
+            "UPDATE COMPANY SET name = %s, document = %s, street = %s, number = %s, "
+            "complement = %s, neighborhood = %s, city = %s, state = %s, zip_code = %s, "
+            "phone = %s, email = %s, updated_at = NOW() WHERE id = %s",
+            (company.name, company.document, company.street, company.number,
+             company.complement, company.neighborhood, company.city, company.state,
+             company.zip_code, company.phone, company.email, company.id)
+        )
+        conn.commit()
+
     def delete(self, id, conn):
         cursor = conn.cursor()
         cursor.execute("DELETE FROM COMPANY WHERE id = %s", (id,))

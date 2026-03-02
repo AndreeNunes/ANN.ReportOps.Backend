@@ -22,6 +22,13 @@ def create(body: CompanyDTO):
     return service.create(body, id_client)
 
 
+@company_controller.route("/<id>", methods=["PUT"])
+@validate()
+def update(id: str, body: CompanyDTO):
+    id_client = request.headers.get("Client-Id")
+    return service.update(id, body, id_client)
+
+
 @company_controller.route("/<id>", methods=["DELETE"])
 @validate()
 def delete(id: str):
