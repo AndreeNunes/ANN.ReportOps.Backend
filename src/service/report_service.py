@@ -1,6 +1,8 @@
-
-
 import math
+from datetime import datetime, timezone
+from email.utils import parsedate_to_datetime
+from zoneinfo import ZoneInfo
+
 from src.dto.api_result import ApiResult
 from src.dto.report_sync_dto import ReportSyncDTO
 from src.model.ordem_service import OrdemService
@@ -11,7 +13,28 @@ from src.dto.report_dto import ReportDTO
 from src.enums.status_report import StatusReport
 from src.model.report import Report
 from src.repository.report_repository import ReportRepository
-from typing import Dict, Any, List
+from typing import Any, Dict, List, Optional
+
+_BRASILIA_TZ = ZoneInfo("America/Sao_Paulo")
+
+
+def _format_report_datetime(value: Any) -> Optional[str]:
+    if value is None:
+        return None
+    if isinstance(value, datetime):
+        dt = value
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        dt = dt.astimezone(_BRASILIA_TZ)
+        return dt.strftime("%Y-%m-%dT%H:%M")
+    if isinstance(value, str):
+        try:
+            dt = parsedate_to_datetime(value)
+            dt = dt.astimezone(_BRASILIA_TZ)
+            return dt.strftime("%Y-%m-%dT%H:%M")
+        except (TypeError, ValueError):
+            return value
+    return str(value)
 
 
 class ReportService:
@@ -204,8 +227,8 @@ class ReportService:
                 "id_client": row.get("report_id_client"),
                 "id_app_user": row.get("report_id_app_user"),
                 "id_reference": row.get("report_id_reference"),
-                "created_at": row.get("report_created_at"),
-                "updated_at": row.get("report_updated_at"),
+                "created_at": _format_report_datetime(row.get("report_created_at")),
+                "updated_at": _format_report_datetime(row.get("report_updated_at")),
             }
 
             return {
@@ -301,6 +324,8 @@ class ReportService:
                 "equipament": equipament_value
             }
 
+            
+
             report_value = {
                 "id": row.get("report_id"),
                 "type": row.get("report_type"),
@@ -308,8 +333,8 @@ class ReportService:
                 "id_client": row.get("report_id_client"),
                 "id_app_user": row.get("report_id_app_user"),
                 "id_reference": row.get("report_id_reference"),
-                "created_at": row.get("report_created_at"),
-                "updated_at": row.get("report_updated_at"),
+                "created_at": _format_report_datetime(row.get("report_created_at")),
+                "updated_at": _format_report_datetime(row.get("report_updated_at")),
             }
 
             return {
