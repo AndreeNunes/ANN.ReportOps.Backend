@@ -1,6 +1,8 @@
 
 
+import math
 from src.dto.api_result import ApiResult
+from src.dto.report_sync_dto import ReportSyncDTO
 from src.model.ordem_service import OrdemService
 from src.enums.types_report import TypesReport
 from src.dto.report_reference_dto import ReportReferenceDTO
@@ -269,3 +271,64 @@ class ReportService:
             return result.to_dict(), result.status_code
         finally:
             conn.close()
+
+
+    def get_report_sync(self, report_sync_dto: ReportSyncDTO, id_client: str):
+        conn = get_connection()
+        total = self.report_repository.get_report_sync_total(id_client, conn)
+
+        reports = self.report_repository.get_report_sync(report_sync_dto.page, report_sync_dto.limit, id_client, conn)
+
+        def map_row(row: Dict[str, Any]) -> Dict[str, Any]:
+            os_data = {
+                k: v
+                for k, v in row.items()
+                if not k.startswith("company_")
+                and not k.startswith("equipament_")
+                and not k.startswith("report_")
+                and k != "report_id"
+            }
+            
+            company_data = {k[len("company_"):]: v for k, v in row.items() if k.startswith("company_")}
+            equipament_data = {k[len("equipament_"):]: v for k, v in row.items() if k.startswith("equipament_")}
+
+            company_value = company_data if any(v is not None for v in company_data.values()) else None
+            equipament_value = equipament_data if any(v is not None for v in equipament_data.values()) else None
+
+            ordem_service_value = {
+                **os_data,
+                "company": company_value,
+                "equipament": equipament_value
+            }
+
+            report_value = {
+                "id": row.get("report_id"),
+                "type": row.get("report_type"),
+                "status": row.get("report_status"),
+                "id_client": row.get("report_id_client"),
+                "id_app_user": row.get("report_id_app_user"),
+                "id_reference": row.get("report_id_reference"),
+                "created_at": row.get("report_created_at"),
+                "updated_at": row.get("report_updated_at"),
+            }
+
+            return {
+                "ordem_service": ordem_service_value,
+                "report": report_value
+            }
+
+        data = [map_row(r) for r in reports]
+
+        result = ApiResult.success_result(
+            data=data,
+            message="Ordem services fetched successfully",
+            status_code=200,
+            metadata={
+                "total": total,
+                "page_total": math.ceil(total / report_sync_dto.limit),
+                "page": report_sync_dto.page,
+                "limit": report_sync_dto.limit
+            }
+        )
+
+        return result.to_dict(), result.status_code

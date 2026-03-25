@@ -310,7 +310,6 @@ class ReportRepository:
 
         return True
 
-
     def update_reference_ordem_service(self, ordem_service: OrdemService, conn):
         cursor = conn.cursor()
         
@@ -436,3 +435,65 @@ class ReportRepository:
         cursor.close();
 
         return True
+
+    def get_report_sync_total(self, id_client, conn):
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT COUNT(*) AS total FROM REPORT WHERE id_client = %s", (id_client,))
+        total = cursor.fetchone()
+        cursor.close()
+        return total["total"]
+
+    def get_report_sync(self, page, limit, id_client, conn):
+        cursor = conn.cursor(dictionary=True)
+
+        sql = """
+            SELECT
+                r.id AS report_id,
+                r.type AS report_type,
+                r.status AS report_status,
+                r.id_client AS report_id_client,
+                r.id_app_user AS report_id_app_user,
+                r.id_reference AS report_id_reference,
+                r.created_at AS report_created_at,
+                r.updated_at AS report_updated_at,
+                os.*,
+                c.id AS company_id,
+                c.name AS company_name,
+                c.document AS company_document,
+                c.street AS company_street,
+                c.number AS company_number,
+                c.complement AS company_complement,
+                c.neighborhood AS company_neighborhood,
+                c.city AS company_city,
+                c.state AS company_state,
+                c.zip_code AS company_zip_code,
+                c.phone AS company_phone,
+                c.email AS company_email,
+                e.id AS equipament_id,
+                e.name AS equipament_name,
+                e.manufacture_date AS equipament_manufacture_date,
+                e.current_hour_meter AS equipament_current_hour_meter,
+                e.compressor_unit_model AS equipament_compressor_unit_model,
+                e.ihm_model AS equipament_ihm_model,
+                e.supply_voltage AS equipament_supply_voltage,
+                e.intake_solenoid_voltage AS equipament_intake_solenoid_voltage,
+                e.serial_number AS equipament_serial_number,
+                e.inverter_softstarter_brand_model AS equipament_inverter_softstarter_brand_model,
+                e.working_pressure AS equipament_working_pressure,
+                e.coalescing_filter_model AS equipament_coalescing_filter_model,
+                e.motor_lubrication_data AS equipament_motor_lubrication_data,
+                e.control_voltage AS equipament_control_voltage
+            FROM REPORT r
+            INNER JOIN ORDEM_SERVICE os ON os.id = r.id_reference
+            LEFT JOIN COMPANY c ON c.id = os.id_company
+            LEFT JOIN EQUIPAMENT e ON e.id = os.id_equipament
+            WHERE r.id_client = %s
+            ORDER BY r.created_at DESC
+            LIMIT %s OFFSET %s
+        """
+        
+        cursor.execute(sql, (id_client, limit, (page - 1) * limit))
+        reports = cursor.fetchall()
+        cursor.close()
+
+        return reports

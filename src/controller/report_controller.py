@@ -3,6 +3,7 @@ from flask_pydantic import validate
 from src.dto.report_reference_dto import ReportReferenceDTO
 from src.dto.report_dto import ReportDTO
 from src.dto.report_ids_dto import ReportIdsDTO
+from src.dto.report_sync_dto import ReportSyncDTO
 from src.service.report_service import ReportService
 
 report_controller = Blueprint("report", __name__)
@@ -69,3 +70,11 @@ def delete(id: str):
     app_user_id = request.headers.get("App-User-Id")
 
     return service.delete(id, app_user_id)
+
+
+@report_controller.route("/get-sync", methods=["POST"])
+@validate()
+def get_report_sync(body: ReportSyncDTO):
+    id_client = request.headers.get("Client-Id")
+
+    return service.get_report_sync(body, id_client)
