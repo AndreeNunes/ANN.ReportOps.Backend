@@ -1,5 +1,7 @@
-from flask import Blueprint, request
+from flask import Blueprint, g, request
 from flask_pydantic import validate
+
+from src.decorators.web_jwt_required import web_jwt_required
 from src.dto.company_dto import CompanyDTO
 from src.service.company_service import CompanyService
 
@@ -13,6 +15,11 @@ def get_all():
     id_client = request.headers.get("Client-Id")
     return service.get_all(id_client)
 
+@company_controller.route("/web", methods=["GET"])
+@web_jwt_required
+@validate()
+def get_all_web():
+    return service.get_all(g.web_client_id)
 
 @company_controller.route("", methods=["POST"])
 @validate()

@@ -13,7 +13,7 @@ from src.controller.utility_controller import utility_controller
 
 app = Flask(__name__)
 
-cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+cors = CORS(app)
 
 app.register_blueprint(authenticate_controller, url_prefix="/v1")
 app.register_blueprint(web_authenticate_controller, url_prefix="/v1/web")
