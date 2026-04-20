@@ -14,6 +14,7 @@ from src.enums.status_report import StatusReport
 from src.model.report import Report
 from src.repository.report_repository import ReportRepository
 from typing import Any, Dict, List, Optional
+from src.repository.company_repository import CompanyRepository
 
 _BRASILIA_TZ = ZoneInfo("America/Sao_Paulo")
 
@@ -41,6 +42,7 @@ class ReportService:
 
     def __init__(self):
         self.report_repository = ReportRepository()
+        self.company_repository = CompanyRepository()
 
     def get_all(self, app_user_id: str):
         conn = get_connection()
@@ -192,6 +194,87 @@ class ReportService:
 
     def delete(self, id: str, app_user_id: str):
         return self.delete_bulk([id], app_user_id)
+
+    def get_company_order_counts(self, id_client: str):
+        conn = get_connection()
+
+        rows = self.company_repository.get_company_order_counts(conn, id_client)
+
+        result = ApiResult.success_result(
+            data=rows,
+            message="Company order counts fetched successfully",
+            status_code=200
+        )
+
+        return result.to_dict(), result.status_code
+
+    def get_ordem_services_by_company(self, company_id: str):
+        conn = get_connection()
+
+        try:
+            rows = self.report_repository.get_ordem_services_by_company(company_id, conn)
+
+            result = ApiResult.success_result(
+                data=rows,
+                message="Ordem services fetched successfully",
+                status_code=200
+            )
+
+            return result.to_dict(), result.status_code
+        except Exception as e:
+            result = ApiResult.error_result(
+                message="Erro ao buscar ordens de serviço da empresa",
+                status_code=500,
+                errors=[str(e)]
+            )
+            return result.to_dict(), result.status_code
+        finally:
+            conn.close()
+
+    def get_ordem_service_by_id(self, ordem_id: str):
+        conn = get_connection()
+
+        try:
+            row = self.report_repository.get_ordem_service_full_by_id(ordem_id, conn)
+
+            if not row:
+                result = ApiResult.not_found_result("Ordem de serviço não encontrada")
+                return result.to_dict(), result.status_code
+
+            os_data = {
+                k: v
+                for k, v in row.items()
+                if not k.startswith("company_") and not k.startswith("equipament_")
+            }
+
+            company_data = {k[len("company_"):]: v for k, v in row.items() if k.startswith("company_")}
+            equipament_data = {k[len("equipament_"):]: v for k, v in row.items() if k.startswith("equipament_")}
+
+            company_value = company_data if any(v is not None for v in company_data.values()) else None
+            equipament_value = equipament_data if any(v is not None for v in equipament_data.values()) else None
+
+            ordem_service_value = {
+                **os_data,
+                "company": company_value,
+                "equipament": equipament_value
+            }
+
+            result = ApiResult.success_result(
+                data={"ordem_service": ordem_service_value},
+                message="Ordem service fetched successfully",
+                status_code=200
+            )
+
+            return result.to_dict(), result.status_code
+        except Exception as e:
+            result = ApiResult.error_result(
+                message="Erro ao buscar ordem de serviço",
+                status_code=500,
+                errors=[str(e)]
+            )
+            return result.to_dict(), result.status_code
+        finally:
+            conn.close()
 
     def get_ordem_service_by_report_ids(self, id_client: str, report_ids: List[str]):
         conn = get_connection()

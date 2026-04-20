@@ -113,6 +113,69 @@ class ReportRepository:
         cursor.close()
         return rows
 
+    def get_ordem_services_by_company(self, company_id, conn):
+        cursor = conn.cursor(dictionary=True)
+
+        query = """
+            SELECT
+                os.id,
+                os.OS_number
+            FROM ORDEM_SERVICE os
+            WHERE os.id_company = %s
+            ORDER BY os.created_at DESC
+        """
+
+        cursor.execute(query, (company_id,))
+        rows = cursor.fetchall()
+        cursor.close()
+
+        return rows
+
+    def get_ordem_service_full_by_id(self, ordem_id, conn):
+        cursor = conn.cursor(dictionary=True)
+
+        sql = """
+            SELECT
+                os.*,
+                c.id AS company_id,
+                c.name AS company_name,
+                c.document AS company_document,
+                c.street AS company_street,
+                c.number AS company_number,
+                c.complement AS company_complement,
+                c.neighborhood AS company_neighborhood,
+                c.city AS company_city,
+                c.state AS company_state,
+                c.zip_code AS company_zip_code,
+                c.phone AS company_phone,
+                c.email AS company_email,
+                e.id AS equipament_id,
+                e.name AS equipament_name,
+                e.manufacture_date AS equipament_manufacture_date,
+                e.current_hour_meter AS equipament_current_hour_meter,
+                e.compressor_unit_model AS equipament_compressor_unit_model,
+                e.ihm_model AS equipament_ihm_model,
+                e.supply_voltage AS equipament_supply_voltage,
+                e.intake_solenoid_voltage AS equipament_intake_solenoid_voltage,
+                e.serial_number AS equipament_serial_number,
+                e.inverter_softstarter_brand_model AS equipament_inverter_softstarter_brand_model,
+                e.working_pressure AS equipament_working_pressure,
+                e.coalescing_filter_model AS equipament_coalescing_filter_model,
+                e.motor_lubrication_data AS equipament_motor_lubrication_data,
+                e.control_voltage AS equipament_control_voltage
+            FROM ORDEM_SERVICE os
+            LEFT JOIN COMPANY c ON c.id = os.id_company
+            LEFT JOIN EQUIPAMENT e ON e.id = os.id_equipament
+            WHERE os.id = %s
+            LIMIT 1
+        """
+
+        cursor.execute(sql, (ordem_id,))
+        row = cursor.fetchone()
+        cursor.close()
+
+        return row
+
     def get_ordem_service_ids_by_report_ids(self, report_ids, conn):
         if not report_ids:
             return []

@@ -1,10 +1,11 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, g
 from flask_pydantic import validate
 from src.dto.report_reference_dto import ReportReferenceDTO
 from src.dto.report_dto import ReportDTO
 from src.dto.report_ids_dto import ReportIdsDTO
 from src.dto.report_sync_dto import ReportSyncDTO
 from src.service.report_service import ReportService
+from src.decorators.web_jwt_required import web_jwt_required
 
 report_controller = Blueprint("report", __name__)
 service = ReportService()
@@ -78,3 +79,20 @@ def get_report_sync(body: ReportSyncDTO):
     id_client = request.headers.get("Client-Id")
 
     return service.get_report_sync(body, id_client)
+
+
+@report_controller.route("/<id>/orders/web", methods=["GET"])
+@web_jwt_required
+def get_ordens_by_company_web(id: str):
+    return service.get_ordem_services_by_company(id)
+
+
+@report_controller.route("/orders/<id>/web", methods=["GET"])
+@web_jwt_required
+def get_ordem_by_id_web(id: str):
+    return service.get_ordem_service_by_id(id)
+
+@report_controller.route("/order-counts/web", methods=["GET"])
+@web_jwt_required
+def get_company_order_counts_web():
+    return service.get_company_order_counts(g.web_client_id)
