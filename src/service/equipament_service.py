@@ -1,10 +1,10 @@
-from src.dto.api_result import ApiResult
-from src.model.equipament import Equipament
-from src.dto.equipament_dto import EquipamentDTO
-from src.repository.equipament_repository import EquipamentRepository
-from src.infra.db import get_connection
 from datetime import datetime
 
+from src.dto.api_result import ApiResult
+from src.dto.equipament_dto import EquipamentDTO
+from src.infra.db import get_connection
+from src.model.equipament import Equipament
+from src.repository.equipament_repository import EquipamentRepository
 
 
 class EquipamentService:
@@ -20,7 +20,25 @@ class EquipamentService:
             result = ApiResult.success_result(
                 data=equipament,
                 message="Equipamentos encontrados com sucesso",
-                status_code=200
+                status_code=200,
+            )
+
+            return result.to_dict(), result.status_code
+        except Exception as e:
+            raise e
+        finally:
+            conn.close()
+
+    def get_all_by_client(self, client_id: str):
+        conn = get_connection()
+
+        try:
+            equipaments = self.equipament_repo.get_all_by_client(conn, client_id)
+
+            result = ApiResult.success_result(
+                data=equipaments,
+                message="Equipamentos encontrados com sucesso",
+                status_code=200,
             )
 
             return result.to_dict(), result.status_code
@@ -33,15 +51,15 @@ class EquipamentService:
         conn = get_connection()
 
         try:
+            print("Criando equipamento com dados:", equipament_dto)
+            
             equipament: Equipament = Equipament().dto_to_model(equipament_dto)
             equipament.company_id = company_id
             self.equipament_repo.add(equipament, conn)
             conn.commit()
 
             result = ApiResult.success_result(
-                data=None,
-                message="Equipamento criado com sucesso",
-                status_code=200
+                data=None, message="Equipamento criado com sucesso", status_code=200
             )
 
             return result.to_dict(), result.status_code
@@ -62,7 +80,9 @@ class EquipamentService:
         conn = get_connection()
 
         try:
-            current = self.equipament_repo.get_by_id(conn, equipament_dto.id, company_id)
+            current = self.equipament_repo.get_by_id(
+                conn, equipament_dto.id, company_id
+            )
 
             if not current:
                 result = ApiResult.not_found_result("Equipamento não encontrado")
@@ -77,9 +97,7 @@ class EquipamentService:
             self.equipament_repo.update(equipament, conn)
 
             result = ApiResult.success_result(
-                data=None,
-                message="Equipamento atualizado com sucesso",
-                status_code=200
+                data=None, message="Equipamento atualizado com sucesso", status_code=200
             )
 
             return result.to_dict(), result.status_code
@@ -101,9 +119,29 @@ class EquipamentService:
             self.equipament_repo.delete(conn, id, company_id)
 
             result = ApiResult.success_result(
-                data=None,
-                message="Equipamento deletado com sucesso",
-                status_code=200
+                data=None, message="Equipamento deletado com sucesso", status_code=200
+            )
+
+            return result.to_dict(), result.status_code
+        except Exception as e:
+            raise e
+        finally:
+            conn.close()
+
+    def get_by_id_with_out_company(self, id: str):
+        conn = get_connection()
+        
+        try:
+            equipament = self.equipament_repo.get_by_id_with_out_company(conn, id)
+
+            if not equipament:
+                result = ApiResult.not_found_result("Equipamento não encontrado")
+                return result.to_dict(), result.status_code
+
+            result = ApiResult.success_result(
+                data=equipament,
+                message="Equipamento encontrado com sucesso",
+                status_code=200,
             )
 
             return result.to_dict(), result.status_code

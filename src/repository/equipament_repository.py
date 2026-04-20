@@ -1,3 +1,5 @@
+from typing import Dict
+
 from src.model.equipament import Equipament
 
 
@@ -5,6 +7,32 @@ class EquipamentRepository:
     def get_all(self, conn, company_id: str):
         cursor = conn.cursor(dictionary=True)
         cursor.execute("SELECT * FROM EQUIPAMENT WHERE company_id = %s", (company_id,))
+        equipament = cursor.fetchall()
+        cursor.close()
+
+        return equipament
+
+    def get_all_by_client(self, conn, client_id: str) -> Dict:
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute(
+            """
+                SELECT
+                    e.id,
+                    e.name,
+                    e.manufacture_date,
+                    c.id as id_company,
+                    c.name as company_name
+                FROM
+                    EQUIPAMENT e
+                JOIN
+                    COMPANY c
+                        ON e.company_id = c.id
+                WHERE
+                    c.client_id = %s
+            """,
+            (client_id,),
+        )
+
         equipament = cursor.fetchall()
         cursor.close()
 
@@ -40,8 +68,8 @@ class EquipamentRepository:
                 equipament.control_voltage,
                 equipament.company_id,
                 equipament.created_at,
-                equipament.updated_at
-            )
+                equipament.updated_at,
+            ),
         )
         conn.commit()
         cursor.close()
@@ -52,7 +80,19 @@ class EquipamentRepository:
         cursor = conn.cursor(dictionary=True)
         cursor.execute(
             "SELECT * FROM EQUIPAMENT WHERE id = %s AND company_id = %s",
-            (id, company_id)
+            (id, company_id),
+        )
+        equipament = cursor.fetchone()
+        cursor.close()
+
+        return equipament
+
+    def get_by_id_with_out_company(self, conn, id: str):
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.execute(
+            "SELECT * FROM EQUIPAMENT WHERE id = %s",
+            (id,),
         )
         equipament = cursor.fetchone()
         cursor.close()
@@ -63,7 +103,7 @@ class EquipamentRepository:
         cursor = conn.cursor()
         cursor.execute(
             """
-            UPDATE 
+            UPDATE
                 EQUIPAMENT
             SET
                 name = %s,
@@ -98,8 +138,8 @@ class EquipamentRepository:
                 equipament.control_voltage,
                 equipament.updated_at,
                 equipament.id,
-                equipament.company_id
-            )
+                equipament.company_id,
+            ),
         )
         conn.commit()
         cursor.close()
@@ -109,8 +149,7 @@ class EquipamentRepository:
     def delete(self, conn, id: str, company_id: str):
         cursor = conn.cursor()
         cursor.execute(
-            "DELETE FROM EQUIPAMENT WHERE id = %s AND company_id = %s",
-            (id, company_id)
+            "DELETE FROM EQUIPAMENT WHERE id = %s AND company_id = %s", (id, company_id)
         )
         conn.commit()
         cursor.close()

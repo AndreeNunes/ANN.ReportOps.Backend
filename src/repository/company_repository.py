@@ -42,3 +42,15 @@ class CompanyRepository:
         cursor = conn.cursor()
         cursor.execute("DELETE FROM COMPANY WHERE id = %s", (id,))
         conn.commit()
+
+    def get_to_equipament(self, conn, client_id: str):
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute(
+            "SELECT id, name FROM COMPANY WHERE client_id = %s",
+            (client_id,)
+        )
+
+        companies_data = cursor.fetchall()
+
+        return companies_data
+
