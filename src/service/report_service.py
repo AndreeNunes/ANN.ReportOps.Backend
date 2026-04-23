@@ -14,7 +14,6 @@ from src.enums.status_report import StatusReport
 from src.model.report import Report
 from src.repository.report_repository import ReportRepository
 from typing import Any, Dict, List, Optional
-from src.repository.company_repository import CompanyRepository
 
 _BRASILIA_TZ = ZoneInfo("America/Sao_Paulo")
 
@@ -42,8 +41,7 @@ class ReportService:
 
     def __init__(self):
         self.report_repository = ReportRepository()
-        self.company_repository = CompanyRepository()
-
+        
     def get_all(self, app_user_id: str):
         conn = get_connection()
 
@@ -195,10 +193,10 @@ class ReportService:
     def delete(self, id: str, app_user_id: str):
         return self.delete_bulk([id], app_user_id)
 
-    def get_company_order_counts(self, id_client: str):
+    def get_orders(self, id_client: str):
         conn = get_connection()
 
-        rows = self.company_repository.get_company_order_counts(conn, id_client)
+        rows = self.report_repository.get_orders(conn, id_client)
 
         result = ApiResult.success_result(
             data=rows,
@@ -208,28 +206,28 @@ class ReportService:
 
         return result.to_dict(), result.status_code
 
-    def get_ordem_services_by_company(self, company_id: str):
-        conn = get_connection()
+    # def get_ordem_services_by_company(self, company_id: str):
+    #     conn = get_connection()
 
-        try:
-            rows = self.report_repository.get_ordem_services_by_company(company_id, conn)
+    #     try:
+    #         rows = self.report_repository.get_ordem_services_by_company(company_id, conn)
 
-            result = ApiResult.success_result(
-                data=rows,
-                message="Ordem services fetched successfully",
-                status_code=200
-            )
+    #         result = ApiResult.success_result(
+    #             data=rows,
+    #             message="Ordem services fetched successfully",
+    #             status_code=200
+    #         )
 
-            return result.to_dict(), result.status_code
-        except Exception as e:
-            result = ApiResult.error_result(
-                message="Erro ao buscar ordens de serviço da empresa",
-                status_code=500,
-                errors=[str(e)]
-            )
-            return result.to_dict(), result.status_code
-        finally:
-            conn.close()
+    #         return result.to_dict(), result.status_code
+    #     except Exception as e:
+    #         result = ApiResult.error_result(
+    #             message="Erro ao buscar ordens de serviço da empresa",
+    #             status_code=500,
+    #             errors=[str(e)]
+    #         )
+    #         return result.to_dict(), result.status_code
+    #     finally:
+    #         conn.close()
 
     def get_ordem_service_by_id(self, ordem_id: str):
         conn = get_connection()
@@ -377,7 +375,6 @@ class ReportService:
             return result.to_dict(), result.status_code
         finally:
             conn.close()
-
 
     def get_report_sync(self, report_sync_dto: ReportSyncDTO, id_client: str):
         conn = get_connection()

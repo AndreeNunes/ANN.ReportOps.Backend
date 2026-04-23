@@ -54,24 +54,3 @@ class CompanyRepository:
 
         return companies_data
 
-    def get_company_order_counts(self, conn, client_id: str):
-        cursor = conn.cursor(dictionary=True)
-
-        query = """
-            SELECT
-                os.id_company AS id_company,
-                c.name AS label,
-                COUNT(os.id) AS total_ordens_service
-            FROM COMPANY c
-            INNER JOIN ORDEM_SERVICE os ON c.id = os.id_company
-            WHERE c.client_id = %s
-            GROUP BY os.id_company, c.name
-            ORDER BY total_ordens_service DESC
-        """
-
-        cursor.execute(query, (client_id,))
-
-        rows = cursor.fetchall()
-
-        return rows
-

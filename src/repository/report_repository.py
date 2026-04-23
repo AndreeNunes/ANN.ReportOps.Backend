@@ -43,8 +43,6 @@ class ReportRepository:
         report = cursor.fetchone()
         cursor.close()
 
-        print("REPORT", report)
-
         return Report(**report) if report else None
 
     def get_reference_ordem_service(self, id_reference, conn):
@@ -113,23 +111,23 @@ class ReportRepository:
         cursor.close()
         return rows
 
-    def get_ordem_services_by_company(self, company_id, conn):
-        cursor = conn.cursor(dictionary=True)
+    # def get_ordem_services_by_company(self, company_id, conn):
+    #     cursor = conn.cursor(dictionary=True)
 
-        query = """
-            SELECT
-                os.id,
-                os.OS_number
-            FROM ORDEM_SERVICE os
-            WHERE os.id_company = %s
-            ORDER BY os.created_at DESC
-        """
+    #     query = """
+    #         SELECT
+    #             os.id,
+    #             os.OS_number
+    #         FROM ORDEM_SERVICE os
+    #         WHERE os.id_company = %s
+    #         ORDER BY os.created_at DESC
+    #     """
 
-        cursor.execute(query, (company_id,))
-        rows = cursor.fetchall()
-        cursor.close()
+    #     cursor.execute(query, (company_id,))
+    #     rows = cursor.fetchall()
+    #     cursor.close()
 
-        return rows
+    #     return rows
 
     def get_ordem_service_full_by_id(self, ordem_id, conn):
         cursor = conn.cursor(dictionary=True)
@@ -560,3 +558,27 @@ class ReportRepository:
         cursor.close()
 
         return reports
+
+    def get_orders(self, conn, client_id: str):
+        cursor = conn.cursor(dictionary=True)
+
+        query = """
+            SELECT
+                os.id,
+                os.OS_number,
+                c.name as 'name_company',
+                e.name as 'name_equipament',
+                os.closing_technician_responsible,
+                os.created_at
+            FROM ORDEM_SERVICE os
+            INNER JOIN COMPANY c ON c.id = os.id_company
+            INNER JOIN EQUIPAMENT e ON e.id = os.id_equipament
+            WHERE c.client_id = %s 
+            ORDER BY os.created_at desc
+        """
+
+        cursor.execute(query, (client_id,))
+
+        rows = cursor.fetchall()
+
+        return rows
