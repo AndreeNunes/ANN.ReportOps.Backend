@@ -206,6 +206,40 @@ class ReportService:
 
         return result.to_dict(), result.status_code
 
+    def get_dashboard(self, id_client: str):
+        conn = get_connection()
+
+        totals = self.report_repository.get_dashboard_totals(conn, id_client)
+        last_orders = self.report_repository.get_last_orders(conn, id_client, limit=5)
+
+        orders = [
+            {
+                "id": row.get("id"),
+                "OS_number": row.get("OS_number"),
+                "company_name": row.get("company_name"),
+                "equipament_name": row.get("equipament_name"),
+                "created_at": _format_report_datetime(row.get("created_at")),
+            }
+            for row in last_orders
+        ]
+
+        data = {
+            "totals": {
+                "companies": int(totals.get("total_companies") or 0),
+                "equipaments": int(totals.get("total_equipaments") or 0),
+                "reports": int(totals.get("total_reports") or 0),
+            },
+            "last_orders": orders,
+        }
+
+        result = ApiResult.success_result(
+            data=data,
+            message="Dashboard fetched successfully",
+            status_code=200
+        )
+
+        return result.to_dict(), result.status_code
+
     # def get_ordem_services_by_company(self, company_id: str):
     #     conn = get_connection()
 

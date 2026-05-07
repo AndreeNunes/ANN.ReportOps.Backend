@@ -96,6 +96,23 @@ def get_ordem_by_id_web(id: str):
 def get_orders():
     return service.get_orders(g.web_client_id)
 
+@report_controller.route("/dashboard/web", methods=["GET"])
+@web_jwt_required
+def get_dashboard():
+    return service.get_dashboard(g.web_client_id)
+
+@report_controller.route("/web", methods=["POST"])
+@web_jwt_required
+@validate()
+def update_report_web(body: ReportDTO):
+    return service.create(body, "", g.web_client_id)
+
+@report_controller.route("/reference/web", methods=["POST"])
+@web_jwt_required
+@validate()
+def create_reference_web(body: ReportReferenceDTO):
+    return service.create_reference(body, "", g.web_client_id)
+
 
 @report_controller.route("/reference/web", methods=["PUT"])
 @web_jwt_required

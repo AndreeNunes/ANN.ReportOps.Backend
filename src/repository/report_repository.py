@@ -573,12 +573,54 @@ class ReportRepository:
             FROM ORDEM_SERVICE os
             INNER JOIN COMPANY c ON c.id = os.id_company
             INNER JOIN EQUIPAMENT e ON e.id = os.id_equipament
-            WHERE c.client_id = %s 
+            WHERE c.client_id = %s
             ORDER BY os.created_at desc
         """
 
         cursor.execute(query, (client_id,))
 
         rows = cursor.fetchall()
+
+        return rows
+
+    def get_dashboard_totals(self, conn, client_id: str):
+        cursor = conn.cursor(dictionary=True)
+
+        query = """
+            SELECT
+                (SELECT COUNT(*) FROM COMPANY c WHERE c.client_id = %s) AS total_companies,
+                (SELECT COUNT(*) FROM EQUIPAMENT e
+                    INNER JOIN COMPANY c ON c.id = e.company_id
+                    WHERE c.client_id = %s) AS total_equipaments,
+                (SELECT COUNT(*) FROM REPORT r WHERE r.id_client = %s) AS total_reports
+        """
+
+        cursor.execute(query, (client_id, client_id, client_id))
+        totals = cursor.fetchone()
+        cursor.close()
+
+        return totals
+
+    def get_last_orders(self, conn, client_id: str, limit: int = 5):
+        cursor = conn.cursor(dictionary=True)
+
+        query = """
+            SELECT
+                os.id,
+                os.OS_number,
+                c.name AS company_name,
+                e.name AS equipament_name,
+                os.created_at
+            FROM ORDEM_SERVICE os
+            INNER JOIN COMPANY c ON c.id = os.id_company
+            INNER JOIN EQUIPAMENT e ON e.id = os.id_equipament
+            WHERE c.client_id = %s
+            ORDER BY os.created_at DESC
+            LIMIT %s
+        """
+
+        cursor.execute(query, (client_id, limit))
+        rows = cursor.fetchall()
+        cursor.close()
 
         return rows
