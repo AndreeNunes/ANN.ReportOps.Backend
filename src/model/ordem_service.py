@@ -11,7 +11,7 @@ class OrdemService:
         created_at=None,
         updated_at=None,
         id_equipament=None,
-        eq_current_hour_meter=None,
+        current_hour_meter=None,
         cga_reason_visit=None,
         cga_reported_defect=None,
         cga_solution_applied=None,
@@ -67,7 +67,7 @@ class OrdemService:
         self.created_at = created_at if created_at else datetime.now()
         self.updated_at = updated_at if updated_at else datetime.now()
         self.id_equipament = id_equipament
-        self.eq_current_hour_meter = eq_current_hour_meter
+        self.current_hour_meter = current_hour_meter
         self.cga_reason_visit = cga_reason_visit
         self.cga_reported_defect = cga_reported_defect
         self.cga_solution_applied = cga_solution_applied
@@ -131,6 +131,6 @@ class OrdemService:
             "created_at": self.created_at,
             "updated_at": self.updated_at,
             "id_equipament": self.id_equipament,
-            "eq_current_hour_meter": self.eq_current_hour_meter,
+            "current_hour_meter": self.current_hour_meter,
         }
         
