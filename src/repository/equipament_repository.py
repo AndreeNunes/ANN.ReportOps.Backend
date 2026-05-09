@@ -12,6 +12,17 @@ class EquipamentRepository:
 
         return equipament
 
+    def get_all_names_by_company(self, conn, company_id: str):
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute(
+            "SELECT id, name FROM EQUIPAMENT WHERE company_id = %s",
+            (company_id,),
+        )
+        equipament = cursor.fetchall()
+        cursor.close()
+
+        return equipament
+
     def get_all_by_client(self, conn, client_id: str) -> Dict:
         cursor = conn.cursor(dictionary=True)
         cursor.execute(

@@ -39,6 +39,12 @@ def get_all_client_id():
     return service.get_all_by_client(g.web_client_id)
 
 
+@equipament_controller.route("/web/names/<company_id>", methods=["GET"])
+@web_jwt_required
+def get_all_names_by_company(company_id: str):
+    return service.get_all_names_by_company(company_id)
+
+
 @equipament_controller.route("/web/<id>", methods=["GET"])
 @web_jwt_required
 def get_client_id_by_id(id: str):

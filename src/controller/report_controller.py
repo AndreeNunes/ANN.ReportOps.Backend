@@ -104,14 +104,14 @@ def get_dashboard():
 @report_controller.route("/web", methods=["POST"])
 @web_jwt_required
 @validate()
-def update_report_web(body: ReportDTO):
+def create_report_web(body: ReportDTO):
     return service.create(body, "", g.web_client_id)
 
 @report_controller.route("/reference/web", methods=["POST"])
 @web_jwt_required
 @validate()
 def create_reference_web(body: ReportReferenceDTO):
-    return service.create_reference(body, "", g.web_client_id)
+    return service.create_reference(body, g.web_client_id)
 
 
 @report_controller.route("/reference/web", methods=["PUT"])

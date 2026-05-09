@@ -158,8 +158,10 @@ class ReportRepository:
                 e.working_pressure AS equipament_working_pressure,
                 e.coalescing_filter_model AS equipament_coalescing_filter_model,
                 e.motor_lubrication_data AS equipament_motor_lubrication_data,
-                e.control_voltage AS equipament_control_voltage
+                e.control_voltage AS equipament_control_voltage,
+                r.id AS report_id
             FROM ORDEM_SERVICE os
+            INNER JOIN REPORT r ON r.id_reference = os.id
             LEFT JOIN COMPANY c ON c.id = os.id_company
             LEFT JOIN EQUIPAMENT e ON e.id = os.id_equipament
             WHERE os.id = %s

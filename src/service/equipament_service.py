@@ -29,6 +29,26 @@ class EquipamentService:
         finally:
             conn.close()
 
+    def get_all_names_by_company(self, company_id: str):
+        conn = get_connection()
+
+        try:
+            equipaments = self.equipament_repo.get_all_names_by_company(
+                conn, company_id
+            )
+
+            result = ApiResult.success_result(
+                data=equipaments,
+                message="Equipamentos encontrados com sucesso",
+                status_code=200,
+            )
+
+            return result.to_dict(), result.status_code
+        except Exception as e:
+            raise e
+        finally:
+            conn.close()
+
     def get_all_by_client(self, client_id: str):
         conn = get_connection()
 
