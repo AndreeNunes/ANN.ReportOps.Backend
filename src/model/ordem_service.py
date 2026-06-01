@@ -1,8 +1,68 @@
-from datetime import datetime
+from datetime import datetime, timezone
+from email.utils import parsedate_to_datetime
+from typing import Any, Dict, Optional
+from zoneinfo import ZoneInfo
+
 from src.dto.ordem_service_dto import OrdemServiceDTO
+
+_BRASILIA_TZ = ZoneInfo("America/Sao_Paulo")
 
 
 class OrdemService:
+
+    DATETIME_FIELDS = (
+        "closing_start_time",
+        "closing_end_time",
+    )
+
+    BOOLEAN_FIELDS = (
+        "cr_hot_air_duct_ok",
+        "cr_hot_air_duct_regularized",
+        "cr_room_temp_vent_ok",
+        "cr_accident_risk",
+        "cr_electrical_install_ok",
+        "cr_grounding_ok",
+        "cr_room_lighting_ok",
+        "cr_service_outlet_220v",
+        "cr_air_point_for_cleaning",
+        "cr_water_point_available",
+        "cr_distancing_ok",
+        "cr_compressor_ok",
+    )
+
+    @staticmethod
+    def format_datetime(value: Any) -> Optional[str]:
+        if value is None:
+            return None
+        if isinstance(value, datetime):
+            dt = value
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=timezone.utc)
+            dt = dt.astimezone(_BRASILIA_TZ)
+            return dt.strftime("%Y-%m-%dT%H:%M")
+        if isinstance(value, str):
+            try:
+                dt = parsedate_to_datetime(value)
+                dt = dt.astimezone(_BRASILIA_TZ)
+                return dt.strftime("%Y-%m-%dT%H:%M")
+            except (TypeError, ValueError):
+                return value
+        return str(value)
+
+    @classmethod
+    def serialize(cls, data: Dict[str, Any]) -> Dict[str, Any]:
+        """Normaliza os campos de ORDEM_SERVICE para a resposta da API:
+        datas no formato YYYY-MM-DDTHH:MM e campos booleanos como true/false."""
+        for field in cls.DATETIME_FIELDS:
+            if field in data:
+                data[field] = cls.format_datetime(data[field])
+
+        for field in cls.BOOLEAN_FIELDS:
+            if field in data and data[field] is not None:
+                data[field] = bool(data[field])
+
+        return data
+
     def __init__(
         self, 
         id=None,

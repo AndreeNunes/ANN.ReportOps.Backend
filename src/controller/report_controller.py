@@ -80,11 +80,6 @@ def get_report_sync(body: ReportSyncDTO):
 
     return service.get_report_sync(body, id_client)
 
-# @report_controller.route("/<id>/orders/web", methods=["GET"])
-# @web_jwt_required
-# def get_ordens_by_company_web(id: str):
-#     return service.get_ordem_services_by_company(id)
-
 
 @report_controller.route("/orders/<id>/web", methods=["GET"])
 @web_jwt_required
