@@ -172,6 +172,46 @@ class ReportService:
     def delete(self, id: str, app_user_id: str):
         return self.delete_bulk([id], app_user_id)
 
+    def delete_web(self, report_id: str, id_client: str):
+        conn = get_connection()
+
+        try:
+            report = self.report_repository.get_by_id_client_and_id(report_id, id_client, conn)
+
+            if not report:
+                result = ApiResult.not_found_result("Report não encontrado")
+                return result.to_dict(), result.status_code
+
+            deleted_ordem_services = self.report_repository.delete_ordem_service_by_id(
+                report.id_reference,
+                conn
+            )
+
+            deleted_reports = self.report_repository.delete_report_by_id(
+                report_id,
+                conn
+            )
+
+            result = ApiResult.success_result(
+                data={
+                    "deleted_reports": deleted_reports,
+                    "deleted_ordem_services": deleted_ordem_services
+                },
+                message="Report e ordem de serviço deletados com sucesso",
+                status_code=200
+            )
+
+            return result.to_dict(), result.status_code
+        except Exception as e:
+            result = ApiResult.error_result(
+                message="Erro ao deletar report/ordem de serviço",
+                status_code=500,
+                errors=[str(e)]
+            )
+            return result.to_dict(), result.status_code
+        finally:
+            conn.close()
+
     def get_orders(self, id_client: str):
         conn = get_connection()
 

@@ -86,6 +86,11 @@ def get_report_sync(body: ReportSyncDTO):
 def get_ordem_by_id_web(id: str):
     return service.get_ordem_service_by_id(id)
 
+@report_controller.route("/web/<id>", methods=["DELETE"])
+@web_jwt_required
+def delete_report_web(id: str):
+    return service.delete_web(id, g.web_client_id)
+
 @report_controller.route("/orders/web", methods=["GET"])
 @web_jwt_required
 def get_orders():

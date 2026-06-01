@@ -212,6 +212,28 @@ class ReportRepository:
         cursor.close()
         return affected
 
+    def delete_ordem_service_by_id(self, ordem_service_id, conn):
+        if not ordem_service_id:
+            return 0
+
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM ORDEM_SERVICE WHERE id = %s", (ordem_service_id,))
+        affected = cursor.rowcount
+        conn.commit()
+        cursor.close()
+        return affected
+
+    def delete_report_by_id(self, report_id, conn):
+        if not report_id:
+            return 0
+
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM REPORT WHERE id = %s", (report_id,))
+        affected = cursor.rowcount
+        conn.commit()
+        cursor.close()
+        return affected
+
     def bulk_delete_reports_by_ids(self, report_ids, conn):
         if not report_ids:
             return 0
