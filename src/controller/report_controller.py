@@ -59,6 +59,7 @@ def create_reference(body: ReportReferenceDTO):
 @report_controller.route("/reference", methods=["PUT"])
 @validate()
 def update_reference(body: ReportReferenceDTO):
+    print("oi")
     app_user_id = request.headers.get("App-User-Id")
     id_client = request.headers.get("Client-Id")
 
