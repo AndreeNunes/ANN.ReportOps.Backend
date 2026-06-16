@@ -120,6 +120,7 @@ class ReportService:
         return result.to_dict(), result.status_code
 
     def create_reference(self, report_reference_dto: ReportReferenceDTO, id_client: str):
+        print("ADICIONANDO...")
         conn = get_connection()
 
         report = self.report_repository.get_by_id_reference_and_id_client(report_reference_dto.id, id_client, conn)
@@ -145,6 +146,7 @@ class ReportService:
         return result.to_dict(), result.status_code
 
     def update_reference(self, report_reference_dto: ReportReferenceDTO, app_user_id: str, id_client: str):
+        print("ATUALIZANDO...")
         conn = get_connection()
 
         report = self.report_repository.get_by_id_reference_and_id_client(report_reference_dto.id, id_client, conn)

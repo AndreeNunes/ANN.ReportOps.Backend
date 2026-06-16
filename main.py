@@ -1,6 +1,8 @@
 from flask import Flask
 from flask_cors import CORS
 
+from src.infra.logger import configure_logging
+from src.middleware.request_logging import register_request_logging
 from src.controller.ordem_service_attachment_controller import ordem_service_attachment_controller
 from src.controller.equipament_controller import equipament_controller
 from src.controller.authenticate_controller import authenticate_controller
@@ -12,6 +14,9 @@ from src.controller.profile_controller import profile_controller
 from src.controller.utility_controller import utility_controller
 
 app = Flask(__name__)
+
+configure_logging()
+register_request_logging(app)
 
 cors = CORS(app)
 
