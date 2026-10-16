@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../ANN.ReportOps.MobileApp"
+		}
+	],
+	"settings": {
+		"workbench.editor.enablePreview": false
+	}
+}

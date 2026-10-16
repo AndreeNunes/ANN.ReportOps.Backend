@@ -12,74 +12,73 @@ service = ReportService()
 
 
 @report_controller.route("", methods=["GET"])
+@web_jwt_required
 @validate()
 def get_all():
-    app_user_id = request.headers.get("App-User-Id")
-    return service.get_all(app_user_id)
+    return service.get_all(g.web_jwt_payload.get("app_user_id"))
 
 @report_controller.route("/<id>", methods=["GET"])
+@web_jwt_required
 @validate()
 def get_by_id(id: str):
-    id_client = request.headers.get("Client-Id")
-    return service.get_by_id(id, id_client)
+    return service.get_by_id(id, g.web_client_id)
 
 @report_controller.route("/ids", methods=["GET"])
+@web_jwt_required
 @validate()
 def get_all_ids():
-    id_client = request.headers.get("Client-Id")
-    return service.get_all_ids(id_client)
+    return service.get_all_ids(g.web_client_id)
 
 @report_controller.route("/references/ids", methods=["POST"])
+@web_jwt_required
 @validate()
 def get_references_by_ids(body: ReportIdsDTO):
-    id_client = request.headers.get("Client-Id")
-    return service.get_ordem_service_by_report_ids(id_client, body.ids)
+    return service.get_ordem_service_by_report_ids(g.web_client_id, body.ids)
 
 @report_controller.route("/bulk", methods=["DELETE"])
+@web_jwt_required
 @validate()
 def delete_bulk(body: ReportIdsDTO):
-    return service.delete_bulk(body.ids)
+    return service.delete_bulk(body.ids, g.web_client_id)
 
 @report_controller.route("", methods=["POST"])
+@web_jwt_required
 @validate()
 def create(body: ReportDTO):
-    app_user_id = request.headers.get("App-User-Id")
-    id_client = request.headers.get("Client-Id")
-    
-    return service.create(body, app_user_id, id_client)
+    return service.create(body, g.web_jwt_payload.get("app_user_id"), g.web_client_id)
 
 
 @report_controller.route("/reference", methods=["POST"])
+@web_jwt_required
 @validate()
 def create_reference(body: ReportReferenceDTO):
-    id_client = request.headers.get("Client-Id")
-
-    return service.create_reference(body, id_client)
+    return service.create_reference(body, g.web_client_id)
 
 @report_controller.route("/reference", methods=["PUT"])
+@web_jwt_required
 @validate()
 def update_reference(body: ReportReferenceDTO):
-    print("oi")
-    app_user_id = request.headers.get("App-User-Id")
-    id_client = request.headers.get("Client-Id")
-
-    return service.update_reference(body, app_user_id, id_client)
+    return service.update_reference(body, g.web_jwt_payload.get("app_user_id"), g.web_client_id)
 
 
 @report_controller.route("/<id>", methods=["DELETE"])
+@web_jwt_required
 @validate()
 def delete(id: str):
-    app_user_id = request.headers.get("App-User-Id")
-
-    return service.delete(id, app_user_id)
+    return service.delete_bulk([id], g.web_client_id)
 
 
 @report_controller.route("/get-sync", methods=["POST"])
+@web_jwt_required
 @validate()
 def get_report_sync(body: ReportSyncDTO):
-    id_client = request.headers.get("Client-Id")
+    return service.get_report_sync(body, g.web_client_id)
 
-    return service.get_report_sync(body, id_client)
+
+@report_controller.route("/needs/<reference_id>/sync", methods=["GET"])
+@web_jwt_required
+def get_needs_assessment_sync(reference_id: str):
+    return service.get_needs_assessment_sync(reference_id, g.web_client_id)
 
 
 @report_controller.route("/orders/<id>/web", methods=["GET"])

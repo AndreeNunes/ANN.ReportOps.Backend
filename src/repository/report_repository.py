@@ -174,6 +174,43 @@ class ReportRepository:
 
         return row
 
+    def get_owned_report_ids(self, report_ids, client_id, conn):
+        if not report_ids:
+            return []
+        cursor = conn.cursor(dictionary=True)
+        placeholders = ", ".join(["%s"] * len(report_ids))
+        cursor.execute(
+            f"SELECT id FROM REPORT WHERE id_client = %s AND id IN ({placeholders})",
+            (client_id, *report_ids),
+        )
+        rows = cursor.fetchall()
+        cursor.close()
+        return [row["id"] for row in rows]
+
+    def get_report_ids_by_type(self, report_ids, report_type, conn):
+        if not report_ids:
+            return []
+        cursor = conn.cursor(dictionary=True)
+        placeholders = ", ".join(["%s"] * len(report_ids))
+        cursor.execute(
+            f"SELECT id_reference FROM REPORT WHERE type = %s AND id IN ({placeholders})",
+            (report_type, *report_ids),
+        )
+        rows = cursor.fetchall()
+        cursor.close()
+        return [row["id_reference"] for row in rows]
+
+    def get_report_sync_page(self, page, limit, id_client, conn):
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute(
+            "SELECT * FROM REPORT WHERE id_client = %s "
+            "ORDER BY created_at DESC, id DESC LIMIT %s OFFSET %s",
+            (id_client, limit, (page - 1) * limit),
+        )
+        rows = cursor.fetchall()
+        cursor.close()
+        return rows
+
     def get_ordem_service_ids_by_report_ids(self, report_ids, conn):
         if not report_ids:
             return []
@@ -197,16 +234,20 @@ class ReportRepository:
         return [row["id_reference"] for row in rows]
 
     def bulk_delete_ordem_service_by_ids(self, ordem_service_ids, conn):
-        """
-        Deleta em lote em ORDEM_SERVICE pelos IDs informados.
-        """
         if not ordem_service_ids:
             return 0
-        
+
         cursor = conn.cursor()
         placeholders = ", ".join(["%s"] * len(ordem_service_ids))
-        sql = f"DELETE FROM ORDEM_SERVICE WHERE id IN ({placeholders})"
-        cursor.execute(sql, list(ordem_service_ids))
+        values = list(ordem_service_ids)
+        cursor.execute(
+            f"DELETE FROM REPORT_MEDIA WHERE report_reference_id IN ({placeholders})",
+            values,
+        )
+        cursor.execute(
+            f"DELETE FROM ORDEM_SERVICE WHERE id IN ({placeholders})",
+            values,
+        )
         affected = cursor.rowcount
         conn.commit()
         cursor.close()
@@ -217,6 +258,10 @@ class ReportRepository:
             return 0
 
         cursor = conn.cursor()
+        cursor.execute(
+            "DELETE FROM REPORT_MEDIA WHERE report_reference_id = %s",
+            (ordem_service_id,),
+        )
         cursor.execute("DELETE FROM ORDEM_SERVICE WHERE id = %s", (ordem_service_id,))
         affected = cursor.rowcount
         conn.commit()
