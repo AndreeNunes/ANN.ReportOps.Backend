@@ -7,6 +7,32 @@ from src.model.report import Report
 
 class ReportRepository:
 
+    def replace_order_technicians(self, order_service_id, technician_ids, conn):
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM ORDEM_SERVICE_TECHNICIAN WHERE order_service_id = %s", (order_service_id,))
+        if technician_ids:
+            cursor.executemany(
+                "INSERT INTO ORDEM_SERVICE_TECHNICIAN (order_service_id, technician_id) VALUES (%s, %s)",
+                [(order_service_id, technician_id) for technician_id in technician_ids],
+            )
+        conn.commit()
+        cursor.close()
+
+    def get_order_technician_ids(self, order_service_ids, conn):
+        if not order_service_ids:
+            return {}
+        cursor = conn.cursor(dictionary=True)
+        tokens = ", ".join(["%s"] * len(order_service_ids))
+        cursor.execute(
+            f"SELECT order_service_id, technician_id FROM ORDEM_SERVICE_TECHNICIAN WHERE order_service_id IN ({tokens})",
+            tuple(order_service_ids),
+        )
+        result = {}
+        for row in cursor.fetchall():
+            result.setdefault(row["order_service_id"], []).append(row["technician_id"])
+        cursor.close()
+        return result
+
     def get_all(self, app_user_id, conn):
         cursor = conn.cursor(dictionary=True)
         cursor.execute("SELECT * FROM REPORT WHERE id_app_user = %s", (app_user_id,))
@@ -364,6 +390,7 @@ class ReportRepository:
                     closing_start_time,
                     closing_end_time,
                     closing_responsible,
+                    closing_contact_id,
                     id_equipament,
                     current_hour_meter,
                     closing_technician_responsible,
@@ -371,7 +398,7 @@ class ReportRepository:
                 ) VALUES (
                     %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
                     %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
-                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
                 )
             """
 
@@ -427,6 +454,7 @@ class ReportRepository:
                 ordem_service.closing_start_time,
                 ordem_service.closing_end_time,
                 ordem_service.closing_responsible,
+                ordem_service.closing_contact_id,
                 ordem_service.id_equipament,
                 ordem_service.current_hour_meter,
                 ordem_service.closing_technician_responsible,
@@ -495,6 +523,7 @@ class ReportRepository:
                 closing_start_time = %s,
                 closing_end_time = %s,
                 closing_responsible = %s,
+                closing_contact_id = %s,
                 id_equipament = %s,
                 current_hour_meter = %s,
                 closing_technician_responsible = %s,
@@ -553,6 +582,7 @@ class ReportRepository:
             ordem_service.closing_start_time,
             ordem_service.closing_end_time,
             ordem_service.closing_responsible,
+            ordem_service.closing_contact_id,
             ordem_service.id_equipament,
             ordem_service.current_hour_meter,
             ordem_service.closing_technician_responsible,

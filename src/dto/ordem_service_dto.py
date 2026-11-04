@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 
 
@@ -62,5 +62,7 @@ class OrdemServiceDTO(BaseModel):
     closing_start_time: Optional[datetime] = None
     closing_end_time: Optional[datetime] = None
     closing_responsible: Optional[str] = None
+    closing_contact_id: Optional[str] = None
     closing_technician_responsible: Optional[str] = None
+    closing_technician_ids: Optional[List[str]] = None
     closing_notes: Optional[str] = None

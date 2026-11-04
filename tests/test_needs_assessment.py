@@ -117,6 +117,49 @@ class NeedsAssessmentTests(unittest.TestCase):
         self.assertTrue(result['success'])
         self.assertTrue(connection.closed)
 
+    def test_delete_needs_assessment_requires_confirmation_then_deletes_photos(self):
+        service = object.__new__(ReportService)
+        deleted = []
+        service.report_repository = SimpleNamespace(
+            get_owned_report_ids=lambda *_: ['r1'],
+            get_ordem_service_ids_by_report_ids=lambda *_args, **_kwargs: [],
+            get_report_ids_by_type=lambda *_args, **_kwargs: ['n1'],
+            bulk_delete_ordem_service_by_ids=lambda *_: 0,
+            bulk_delete_reports_by_ids=lambda *_args, **_kwargs: deleted.append('report') or 1,
+        )
+        service.needs_repository = SimpleNamespace(
+            delete_by_ids=lambda *_: deleted.append('needs') or 1,
+        )
+        service.media_repository = SimpleNamespace(
+            get_manifests=lambda *_: {'n1': [
+                {'object_key': 'clients/c1/reports/n1/needs-assessment/air_filter/photo-1.jpg'},
+            ]},
+        )
+        calls = []
+        service.s3 = SimpleNamespace(delete_objects=lambda **kwargs: calls.append(kwargs) or {})
+        service.bucket_name = 'bucket'
+
+        first_connection = FakeConnection()
+        with patch('src.service.report_service.get_connection', return_value=first_connection):
+            result, status = service.delete_bulk(['r1'], 'c1')
+        self.assertEqual(status, 409)
+        self.assertTrue(result['data']['requires_media_deletion_confirmation'])
+        self.assertEqual(calls, [])
+        self.assertEqual(deleted, [])
+        self.assertTrue(first_connection.closed)
+
+        confirmed_connection = FakeConnection()
+        with patch('src.service.report_service.get_connection', return_value=confirmed_connection):
+            result, status = service.delete_bulk(['r1'], 'c1', confirm_media_deletion=True)
+        self.assertEqual(status, 200)
+        self.assertTrue(result['success'])
+        self.assertEqual(calls[0]['Bucket'], 'bucket')
+        self.assertEqual(calls[0]['Delete']['Objects'], [
+            {'Key': 'clients/c1/reports/n1/needs-assessment/air_filter/photo-1.jpg'},
+        ])
+        self.assertEqual(deleted, ['needs', 'report'])
+        self.assertTrue(confirmed_connection.closed)
+
     def test_mixed_sync_keeps_page_order_and_media_groups(self):
         service = object.__new__(ReportService)
         page = [

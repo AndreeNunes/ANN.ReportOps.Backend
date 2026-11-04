@@ -39,7 +39,11 @@ def get_references_by_ids(body: ReportIdsDTO):
 @web_jwt_required
 @validate()
 def delete_bulk(body: ReportIdsDTO):
-    return service.delete_bulk(body.ids, g.web_client_id)
+    return service.delete_bulk(
+        body.ids,
+        g.web_client_id,
+        confirm_media_deletion=body.confirm_media_deletion,
+    )
 
 @report_controller.route("", methods=["POST"])
 @web_jwt_required
