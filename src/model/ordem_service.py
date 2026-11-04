@@ -118,7 +118,9 @@ class OrdemService:
         closing_start_time=None,
         closing_end_time=None,
         closing_responsible=None,
+        closing_contact_id=None,
         closing_technician_responsible=None,
+        closing_technician_ids=None,
         closing_notes=None
     ):
         self.id = id
@@ -174,7 +176,9 @@ class OrdemService:
         self.closing_start_time = closing_start_time
         self.closing_end_time = closing_end_time
         self.closing_responsible = closing_responsible
+        self.closing_contact_id = closing_contact_id
         self.closing_technician_responsible = closing_technician_responsible
+        self.closing_technician_ids = closing_technician_ids or []
         self.closing_notes = closing_notes
 
     def dto_to_model(self, dto: OrdemServiceDTO):
@@ -183,7 +187,6 @@ class OrdemService:
                 setattr(self, key, value)
                 
         return self
-
     def to_dict(self):
         return {
             "id": self.id,
@@ -192,5 +195,5 @@ class OrdemService:
             "updated_at": self.updated_at,
             "id_equipament": self.id_equipament,
             "current_hour_meter": self.current_hour_meter,
+            "closing_contact_id": self.closing_contact_id,
         }
-        

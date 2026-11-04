@@ -12,6 +12,7 @@ from src.controller.report_controller import report_controller
 from src.controller.client_controller import client_controller
 from src.controller.profile_controller import profile_controller
 from src.controller.utility_controller import utility_controller
+from src.controller.technician_controller import technician_controller
 
 app = Flask(__name__)
 
@@ -29,6 +30,7 @@ app.register_blueprint(ordem_service_attachment_controller, url_prefix="/v1/orde
 app.register_blueprint(client_controller, url_prefix="/v1/client")
 app.register_blueprint(profile_controller, url_prefix="/v1/profile")
 app.register_blueprint(utility_controller, url_prefix="/v1/utility")
+app.register_blueprint(technician_controller, url_prefix="/v1/technician")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080, debug=True)

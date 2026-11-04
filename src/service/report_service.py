@@ -1,5 +1,7 @@
 import math
 
+from botocore.exceptions import ClientError
+
 from src.dto.api_result import ApiResult
 from src.dto.report_sync_dto import ReportSyncDTO
 from src.model.ordem_service import OrdemService
@@ -13,6 +15,9 @@ from src.model.report import Report
 from src.repository.report_repository import ReportRepository
 from src.repository.needs_assessment_repository import NeedsAssessmentRepository
 from src.repository.report_media_repository import ReportMediaRepository
+from src.repository.company_contact_repository import CompanyContactRepository
+from src.repository.technician_repository import TechnicianRepository
+from src.infra.tebi import get_bucket_name, get_s3_client
 from typing import Any, Dict, List, Optional
 
 def _format_report_datetime(value: Any) -> Optional[str]:
@@ -25,6 +30,41 @@ class ReportService:
         self.report_repository = ReportRepository()
         self.needs_repository = NeedsAssessmentRepository()
         self.media_repository = ReportMediaRepository()
+        self.company_contact_repository = CompanyContactRepository()
+        self.technician_repository = TechnicianRepository()
+        self.s3 = get_s3_client()
+        self.bucket_name = get_bucket_name()
+
+    def _delete_bucket_objects(self, object_keys: List[str]):
+        """Remove objects before deleting their database manifest.
+
+        S3-compatible APIs accept at most 1,000 keys per request.  An explicit
+        error response is also needed because delete_objects can report errors
+        in its payload without raising a ClientError.
+        """
+        for start in range(0, len(object_keys), 1000):
+            keys = object_keys[start:start + 1000]
+            response = self.s3.delete_objects(
+                Bucket=self.bucket_name,
+                Delete={"Objects": [{"Key": key} for key in keys]},
+            )
+            if response.get("Errors"):
+                raise RuntimeError("O storage recusou a remoção de uma ou mais fotos")
+
+    def _validate_order_closing_contact(self, order_service, conn):
+        """A contact can only close an order for its own company.
+
+        Orders created before this feature have no contact and remain valid.
+        """
+        if not order_service.closing_contact_id:
+            return True
+        return bool(self.company_contact_repository.get_owned(
+            order_service.id_company, order_service.closing_contact_id, conn
+        ))
+
+    def _validate_order_technicians(self, order_service, client_id, conn):
+        ids = list(dict.fromkeys(order_service.closing_technician_ids or []))
+        return len(ids) == len(self.technician_repository.owned_ids(ids, client_id, conn))
 
     def get_all(self, app_user_id: str):
         conn = get_connection()
@@ -148,7 +188,12 @@ class ReportService:
                         return {"message": "Dados da Ordem de Serviço ausentes"}, 422
                     model = OrdemService().dto_to_model(report_reference_dto.order_service)
                     model.id = report.id_reference
+                    if not self._validate_order_closing_contact(model, conn):
+                        return {"message": "Cliente de encerramento inválido para a empresa"}, 422
+                    if not self._validate_order_technicians(model, id_client, conn):
+                        return {"message": "Técnico de encerramento inválido para este tenant"}, 422
                     self.report_repository.create_reference_ordem_service(model, conn)
+                    self.report_repository.replace_order_technicians(model.id, model.closing_technician_ids, conn)
                 case TypesReport.NEEDS_ASSESSMENT.value:
                     dto = report_reference_dto.needs_assessment
                     if dto is None:
@@ -182,7 +227,12 @@ class ReportService:
                         return {"message": "Dados da Ordem de Serviço ausentes"}, 422
                     model = OrdemService().dto_to_model(report_reference_dto.order_service)
                     model.id = report.id_reference
+                    if not self._validate_order_closing_contact(model, conn):
+                        return {"message": "Cliente de encerramento inválido para a empresa"}, 422
+                    if not self._validate_order_technicians(model, id_client, conn):
+                        return {"message": "Técnico de encerramento inválido para este tenant"}, 422
                     self.report_repository.update_reference_ordem_service(model, conn)
+                    self.report_repository.replace_order_technicians(model.id, model.closing_technician_ids, conn)
                 case TypesReport.NEEDS_ASSESSMENT.value:
                     dto = report_reference_dto.needs_assessment
                     if dto is None:
@@ -426,7 +476,12 @@ class ReportService:
 
         return result.to_dict(), result.status_code
 
-    def delete_bulk(self, report_ids: List[str], id_client: str):
+    def delete_bulk(
+        self,
+        report_ids: List[str],
+        id_client: str,
+        confirm_media_deletion: bool = False,
+    ):
         conn = get_connection()
 
         try:
@@ -449,12 +504,26 @@ class ReportService:
             needs_ids = self.report_repository.get_report_ids_by_type(
                 report_ids, TypesReport.NEEDS_ASSESSMENT.value, conn
             )
-            if self.media_repository.get_manifests(needs_ids, conn):
+            needs_media = self.media_repository.get_manifests(needs_ids, conn)
+            media_keys = [
+                item["object_key"]
+                for manifest in needs_media.values()
+                for item in manifest
+            ]
+            if media_keys and not confirm_media_deletion:
                 result = ApiResult.error_result(
-                    "Este levantamento tem fotos no bucket. A exclusão completa está pendente de habilitação.",
+                    "Este levantamento possui fotos. Confirme a exclusão para removê-las definitivamente.",
                     status_code=409,
+                    data={
+                        "requires_media_deletion_confirmation": True,
+                        "media_count": len(media_keys),
+                    },
                 )
                 return result.to_dict(), result.status_code
+
+            if media_keys:
+                self._delete_bucket_objects(media_keys)
+
             deleted_ordem_services = self.report_repository.bulk_delete_ordem_service_by_ids(
                 ordem_service_ids, conn
             )
@@ -473,6 +542,13 @@ class ReportService:
                 status_code=200
             )
 
+            return result.to_dict(), result.status_code
+        except (ClientError, RuntimeError) as e:
+            result = ApiResult.error_result(
+                message="Não foi possível remover as fotos do storage. Nenhum relatório foi excluído.",
+                status_code=502,
+                errors=[str(e)],
+            )
             return result.to_dict(), result.status_code
         except Exception as e:
             result = ApiResult.error_result(
@@ -548,6 +624,9 @@ class ReportService:
             manifests = self.media_repository.get_manifests(
                 [row["id_reference"] for row in page_reports], conn
             )
+            order_technicians = self.report_repository.get_order_technician_ids(
+                [row["id"] for row in os_rows.values()], conn
+            )
             data = []
             for report in page_reports:
                 report_value = dict(report)
@@ -571,6 +650,7 @@ class ReportService:
                     equipament = {k[11:]: v for k, v in row.items() if k.startswith("equipament_")}
                     item["ordem_service"] = {
                         **OrdemService.serialize(os_data),
+                        "closing_technician_ids": order_technicians.get(row["id"], []),
                         "company": company if company.get("id") else None,
                         "equipament": equipament if equipament.get("id") else None,
                     }
